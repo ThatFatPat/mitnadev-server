@@ -1,5 +1,6 @@
 const express = require('express')
 const session = require('express-session') // this will be used to remember logged in users
+const path = require('path')
 
 const app = express()
 
@@ -69,4 +70,5 @@ api.get('/studentdata', (req, res) =>  {
 
 
 app.use('/api', api)
+app.use('/', express.static(path.join(__dirname, 'website')))
 app.listen(3000)
