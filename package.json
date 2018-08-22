@@ -1,0 +1,24 @@
+{
+  "name": "mitnadev-server",
+  "version": "1.0.0",
+  "description": "the server",
+  "main": "src/app.js",
+  "scripts": {
+    "main": "node ./src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThatFatPat/mitnadev-server.git"
+  },
+  "author": "Oded Shapira & Ido Shavit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ThatFatPat/mitnadev-server/issues"
+  },
+  "homepage": "https://github.com/ThatFatPat/mitnadev-server#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-session": "^1.15.6"
+  }
+}
