@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/ThatFatPat/mitnadev-server#readme",
   "dependencies": {
+    "bcrypt": "^3.0.0",
     "express": "^4.16.3",
-    "express-session": "^1.15.6"
+    "express-session": "^1.15.6",
+    "mysql": "^2.16.0"
   }
 }

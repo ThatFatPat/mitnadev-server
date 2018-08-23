@@ -1,6 +1,7 @@
 const express = require('express')
 const session = require('express-session') // this will be used to remember logged in users
 const path = require('path')
+const auth = require('./api/authorization')
 
 const app = express()
 
@@ -9,56 +10,88 @@ app.use(session({
     resave: true,
     saveUninitialized: false,
     cookie: {
+        maxAge: 900000,
         httpOnly: true // javascript client can't see document.cookie to get the session id
     }
 }))
 
-
 const api = express()
 
 /**
- * This will be used to login (get user information)
+ * This will be used to authenticate and retrieve user information
  */
 api.post('/user', (req, res) => {
-    username = req.body.username
+    id = req.body.id
     password = req.body.password
     rememberMe = req.body.rememberMe
-    // API CALL HERE TO FETCH THE PASSWORD HASH THEN COMPARE THE HASHES AND RETURN THE INFO
-    data = { id: "yahoo", token: "secret", type: 0, name: "lolik"}
-    if (rememberMe)
-        req.session.token = data.token // Saves login server side
+    const data = await auth.login(id, password)
+    if (!data) {
+        return
+    }
+    req.session.token = data.id
+    if (rememberMe) {
+         req.session.cookie.maxAge = null  // let the cookie live forever
+    }
     res.json(data)
 })
 
 api.post('/logout', (req, res) => {
     if (req.session.token) {
-        req.session.token = null // removes login from 
+        req.session.destroy((err)=>{
+            req.session = null
+        })
         res.json({ successful: true })
     } else {
         res.status(401).json({ successful: false })
     }
 })
 
-api.get('/headers', (req, res) => {
-    if (!!req.get('Authorization')) {
-        // CHECK INTEGRITY OF USER WITH THAT TOKEN IF IT IS INVALID RETURN
-    } else if (!!req.session.token) {
-        // CHECK INTEGRITY OF USER WITH THAT TOKEN IF IT IS INVALID RETURN
-    } else {
-        res.status(401).json({ headers: [] })
+api.post('/registerteacher', (req, res) => {
+    if (req.body.secret !== 'iO2fSA78fS') {
+        res.status(401).send("")
+        return
     }
+    auth.registerTeacher(req.body.id, req.body.name, req.body.password).then(()=>{
+        res.status(200).send("")
+    }).catch(()=>{
+        res.status(400).send("")
+    })
+})
+
+api.post('/register', (req, res) => {
+    auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.subject1, req.body.cl).then(()=>{
+        res.status(200).send("")
+    }).catch(()=>{
+        res.status(400).send("")
+    })
+})
+
+/**
+ * Middleware to exclude the non-authorised api calls to authorised api calls 
+ */
+api.use((req, res, next) => {
+    if (req.session.token) {
+        const teacherType = ['/headers', '/studentdata']
+        const studentType = []
+        const user = await auth.getUserInfo(id)
+        if (teacherType.includes(req.path) && user.type === 1) {
+            next()
+        } else if (studentType.includes(req.path) && user.type === 0) {
+            next()
+        } else {
+            res.status(401).json({})
+        }
+    } else {
+        res.status(401).json({})
+    }
+})
+
+api.get('/headers', (req, res) => {
     // might need api call to fetch headers
     res.json({ headers: [['שם פרטי', 'first'], ['שם משפחה', 'last'], ['אני לא יודע', 'hand']] })
 })
 
 api.get('/studentdata', (req, res) =>  {
-    if (!!req.get('Authorization')) {
-        // CHECK INTEGRITY OF USER WITH THAT TOKEN IF IT IS INVALID RETURN
-    } else if (!!req.session.token) {
-        // CHECK INTEGRITY OF USER WITH THAT TOKEN IF IT IS INVALID RETURN
-    } else {
-        res.status(401).json({ data: [] })
-    }
     res.json({ data: [
         { key: 12, first: 'Oded', last: 'Shapira', hand: 'I am not sure' },
         { key: 15, first: 'Ido', last: 'Shavit', hand: 'Please' },
