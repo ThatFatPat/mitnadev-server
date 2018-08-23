@@ -68,7 +68,11 @@ export async function getUserInfo(id) {
  * @param {string} id the id of the student
  */
 export async function getStudentInfo(id) {
+    return (await queryingAsync('SELECT * FROM students WHERE ?', {id}))[0]
+}
 
+export async function removeFirst(id) {
+    await queryingAsync('UPDATE users SET firstLogin = 0 WHERE ?', {id})
 }
 
 process.on('SIGTERM', ()=>{

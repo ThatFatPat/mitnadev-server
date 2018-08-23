@@ -24,15 +24,18 @@ api.post('/user', (req, res) => {
     id = req.body.id
     password = req.body.password
     rememberMe = req.body.rememberMe
-    const data = await auth.login(id, password)
-    if (!data) {
-        return
-    }
-    req.session.token = data.id
-    if (rememberMe) {
-         req.session.cookie.maxAge = null  // let the cookie live forever
-    }
-    res.json(data)
+    auth.login(id, password).then((data)=>{
+        if (!data) {
+            return
+        }
+        req.session.token = data.id
+        if (rememberMe) {
+                req.session.cookie.maxAge = null  // let the cookie live forever
+        }
+        res.json(data)
+    }).catch(()=>{
+        res.status(400).json({})
+    })
 })
 
 api.post('/logout', (req, res) => {
@@ -71,19 +74,33 @@ api.post('/register', (req, res) => {
  */
 api.use((req, res, next) => {
     if (req.session.token) {
+        const allType = ['/removeFirst']
         const teacherType = ['/headers', '/studentdata']
         const studentType = []
-        const user = await auth.getUserInfo(id)
-        if (teacherType.includes(req.path) && user.type === 1) {
-            next()
-        } else if (studentType.includes(req.path) && user.type === 0) {
-            next()
-        } else {
+        auth.getUserInfo(req.session.token).then((user)=>{
+            if (allType.includes(req.path)) {
+                next()
+            } else if (teacherType.includes(req.path) && user.type === 1) {
+                next()
+            } else if (studentType.includes(req.path) && user.type === 0) {
+                next()
+            } else {
+                res.status(401).json({})
+            }
+        }).catch(()=>{
             res.status(401).json({})
-        }
+        })
     } else {
         res.status(401).json({})
     }
+})
+
+api.post('/removeFirst', (req, res) => {
+    auth.removeFirst(req.session.token).then(()=>{
+        res.status(200).json({})
+    }).catch(()=>{
+        res.status(400).json({})
+    })
 })
 
 api.get('/headers', (req, res) => {

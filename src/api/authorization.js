@@ -27,3 +27,7 @@ export async function login(id, password) {
 export async function getUserInfo(id) {
     return await database.getUserInfo(id)
 }
+
+export async function removeFirst(id) {
+    return await database.removeFirst(id)
+}

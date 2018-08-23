@@ -1,0 +1,11 @@
+{
+    "presets": [
+        "env"
+    ],
+    "plugins": ["transform-regenerator", "transform-runtime"],
+    "ignore": [
+        "node_modules/",
+        "dist/",
+        "src/website/"
+    ]
+}
