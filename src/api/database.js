@@ -4,11 +4,17 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'i9HE6K#a2U3p',
-    database: 'mitnadev'
+    database: 'mitnadev',
 })
 
+exports.connection = connection
+
 connection.connect((err)=>{
-    process.exit(1)
+    if (err) {
+        console.error(err)
+    } else {
+        console.log('Successfully connected to the database.')
+    }
 })
 
 async function queryingAsync(query, values) {
@@ -28,8 +34,9 @@ async function queryingAsync(query, values) {
  * @param {string} name 
  * @param {string} password hashed password
  */
-export async function registerTeacher(id, name, password) {
-    return await queryingAsync('CALL registerTeacher(?, ?, ?);', [id, name, password])
+exports.registerTeacher = async function (id, name, pass) {
+    console.log(id + ' ' + name + ' ' + pass + ' ')
+    return queryingAsync('CALL registerTeacher(?, ?, ?);', [id, name, pass])
 }
 
 /**
@@ -42,15 +49,15 @@ export async function registerTeacher(id, name, password) {
  * @param {number} subject1 all the other subjects will be added in the user settings later
  * @param {number} cl 
  */
-export async function registerStudent(id, name, password, phone, email, subject1, cl) {
-    return await queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?, ?)', [ id, name, password, phone, email, subject1, cl ])
+exports.registerStudent = async function (id, name, pass, phone, email, subject1, cl) {
+    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, subject1, cl ])
 }
 
 /**
  * get the hashed password of a user
  * @param {string} id 
  */
-export async function getHashedPass(id) {
+exports.getHashedPass = async function (id) {
     return (await queryingAsync('SELECT * FROM users WHERE ?', {id}))[0].pass
 }
 
@@ -58,7 +65,7 @@ export async function getHashedPass(id) {
  * get basic user info
  * @param {string} id 
  */
-export async function getUserInfo(id) {
+exports.getUserInfo = async function (id) {
     const user = (await queryingAsync('SELECT * FROM users WHERE ?', {id}))[0]
     return {id: user.id, name: user.name, type: user.type, firstLogin: user.firstLogin}  // return only the client friendly user info
 }
@@ -67,11 +74,11 @@ export async function getUserInfo(id) {
  * not to be confused with getUserInfo, this will give us the data we need about the student itself. not user related stuff 
  * @param {string} id the id of the student
  */
-export async function getStudentInfo(id) {
+exports.getStudentInfo = async function (id) {
     return (await queryingAsync('SELECT * FROM students WHERE ?', {id}))[0]
 }
 
-export async function removeFirst(id) {
+exports.removeFirst = async function (id) {
     await queryingAsync('UPDATE users SET firstLogin = 0 WHERE ?', {id})
 }
 
