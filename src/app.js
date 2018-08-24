@@ -32,27 +32,32 @@ app.use('*', cors({
     credentials: true
 }))
 
-api.use('*', (req, res, next) => {
-    Promise.resolve(next()).catch(next)
-})
-
 /**
  * This will be used to authenticate and retrieve user information
  */
-api.post('/user', async (req, res) => {
+api.post('/user', (req, res) => {
     id = req.body.id
     password = req.body.password
     rememberMe = req.body.rememberMe
-    const data = await auth.login(id, password)
-    if (!data) {
-        res.status(400).json({})
-        return
-    }
-    req.session.token = data.id
-    if (!rememberMe) {
+    auth.login(id, password).then((data)=>{
+        if (!data) {
+            res.sendStatus(400)
+            return
+        }
+        req.session.token = data.id
+        if (!rememberMe) {
             req.session.cookie.maxAge = 900000
-    }
-    res.json(data)
+        }
+        req.session.save((err)=>{
+            if (!err) {
+                res.json(data).end()
+            } else {
+                res.sendStatus(500)
+            }
+        })
+    }).catch(()=>{
+        res.sendStatus(401)
+    })
 })
 
 api.post('/logout', (req, res) => {
@@ -82,19 +87,9 @@ api.post('/register', (req, res) => {
 
 /**
  * Middleware to exclude the non-authorised api calls to authorised api calls 
- * I will take a 0.1 second delay cause of session inpersistnace
  */
-api.use(async (req, res, next) => {
+api.use((req, res, next) => {
     console.log(req.session)
-    await new Promise((resolve, reject) => {
-        setTimeout(()=>{
-            req.session.reload((err)=>{
-                if (!err) {
-                    reject(err)
-                }
-                resolve()
-            })
-        }, 100)})
     if (req.session.token) {
         const allType = ['/removeFirst']
         const teacherType = ['/headers', '/studentdata']
@@ -108,13 +103,13 @@ api.use(async (req, res, next) => {
             } else if (studentType.includes(req.path) && user.type === 0) {
                 next()
             } else {
-                res.status(401).json({})
+                res.sendStatus(401)
             }
         }).catch(()=>{
-            res.status(401).json({})
+            res.sendStatus(401)
         })
     } else {
-        res.status(401).json({})
+        res.sendStatus(401)
     }
 })
 
