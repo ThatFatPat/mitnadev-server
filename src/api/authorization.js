@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt') // one of the best password hashers, it auto generates salts to prevent rainbow tables.
 const database = require('./database')
+const LocalStrategy = require('passport-local').Strategy
 
 function validDetails(data) {
     if (data.id && !(/^[0-9]{9}$/).test(data.id)) {
@@ -17,6 +18,29 @@ async function hashPass(password) {
     return bcrypt.hash(password, 10)
 }
 
+exports.strategy = new LocalStrategy({usernameField: 'id', passwordField: 'password'}, (id, password, done)=>{
+    if (!validDetails({id, password})) {
+        return done(null, false)
+    }
+    database.getHashedPass(id).then((hashedpass)=>{
+        bcrypt.compare(password, hashedpass).then((match)=>{
+            if (match) {
+                database.getUserInfo(id).then(user=>{
+                    return done(null, user)
+                }).catch(err=>{
+                    return done(err)
+                })
+            } else {
+                return done(null, false)
+            }
+        }).catch(err=>{
+            return done(err)
+        })
+    }).catch(err=>{
+        return done(err)
+    })
+})
+
 exports.registerTeacher = async function (id, name, password) {
     const hashedpass = await hashPass(password)
     return database.registerTeacher(id, name, hashedpass)
@@ -25,18 +49,6 @@ exports.registerTeacher = async function (id, name, password) {
 exports.registerStudent = async function (id, name, password, phone, email, subject1, cl /* class, can't type that obviously */) {
     const hashedpass = await hashPass(password)
     return database.registerStudent(id, name, hashedpass)
-}
-
-exports.login = async function (id, password) {
-    if (!validDetails({id, password})) {
-        throw "Invalid details"
-    }
-    const hashedpass = await database.getHashedPass(id)
-    if (await bcrypt.compare(password, hashedpass)) {
-        return database.getUserInfo(id)
-    } else {
-        return null
-    }
 }
 
 exports.getUserInfo = async function (id) {

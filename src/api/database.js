@@ -82,6 +82,25 @@ exports.removeFirst = async function (id) {
     await queryingAsync('UPDATE users SET firstLogin = 0 WHERE ?', {id})
 }
 
+/**
+ * Basically it will take the student's name, the subject's name and whether this match is active by the teacher's id
+ */
+exports.fetchData = async function (id) {
+    return queryingAsync('SELECT matches.active, users.name as student, subjects.name as subject \
+    FROM matches \
+    WHERE matches.rakazim_id = ? \
+    JOIN users ON users.id = matches.students_id \
+    JOIN subjects ON subjects.id = matches.subjects_id')
+}
+
+exports.fetchClasses = async function () {
+    return queryingAsync('SELECT classes.name from classes')
+}
+
+exports.fetchSubjects = async function () {
+    return queryingAsync('SELECT subjects.name from subjects')
+}
+
 process.on('SIGTERM', ()=>{
     connection.end()
 })

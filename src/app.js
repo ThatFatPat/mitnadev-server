@@ -1,67 +1,87 @@
 const express = require('express')
-const session = require('express-session') // this will be used to remember logged in users
-const asyncHandler = require('express-async-handler') // async baby
+const passport = require('passport') // this will be used to remember logged in users
+const session = require('express-session')
 const path = require('path')
 const auth = require('./api/authorization')
+const teacher = require('./api/teacher')
+const student = require('./api/student')
 const MySQLStore = require('express-mysql-session')(session) // this will remember logged in users and save it in mysql
 const connection = require('./api/database').connection
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const store = new MySQLStore({}, connection)
 
 const app = express()
 
+app.use(express.json())
+app.use(cookieParser('shhh it is a secret'))
 app.use(session({
-    secret: 'hewo',
+    secret: 'shhh it is a secret',
     resave: false,
-    store,
     saveUninitialized: false,
-    rolling: true,
+    store,
     cookie: {
-        httpOnly: true, 
-        secure: false,
-        maxAge: 86400000
+        maxAge: 900000,
+        credentials: true,
+        secure: false
     }
 }))
 
-app.use(express.json())
+/**
+ * Initialize passport
+ */
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(auth.strategy)
+passport.serializeUser((user, done)=>{
+    done(null, user)
+})
+passport.deserializeUser((user, done)=>{
+    done(null, user)
+})
 
-const api = express()
-
+/**
+ * enable cors
+ */
 app.use('*', cors({
     origin: 'http://localhost:8080',
     credentials: true
 }))
 
 /**
+ * initialize api
+ */
+const api = express()
+
+/**
  * This will be used to authenticate and retrieve user information
  */
-api.post('/user', (req, res) => {
+api.post('/user', (req, res, next) => {
     id = req.body.id
     password = req.body.password
     rememberMe = req.body.rememberMe
-    auth.login(id, password).then((data)=>{
-        if (!data) {
-            res.sendStatus(400)
-            return
+    if (rememberMe) {
+        req.session.cookie.maxAge = 604800000
+    }
+    passport.authenticate('local', (err, user, info)=>{
+        if (err) {
+            console.log(err)
+            return res.sendStatus(400)
         }
-        req.session.token = data.id
-        if (!rememberMe) {
-            req.session.cookie.maxAge = 900000
+        if (!user) {
+            return res.sendStatus(401)
         }
-        req.session.save((err)=>{
-            if (!err) {
-                res.json(data).end()
-            } else {
-                res.sendStatus(500)
+        req.login(user, err=>{
+            if (err) {
+                return res.sendStatus(500)
             }
+            return res.json(user)
         })
-    }).catch(()=>{
-        res.sendStatus(401)
-    })
+    })(req, res, next);
 })
 
 api.post('/logout', (req, res) => {
-    req.session.destroy()
+    req.logOut()
     res.sendStatus(200)
 })
 
@@ -85,34 +105,48 @@ api.post('/register', (req, res) => {
     })
 })
 
+api.get('/classes', (req, res) => {
+    student.fetchClasses().then((classes)=>{
+        res.json({classes})
+    }).catch(()=>{
+        res.sendStatus(500)
+    })
+})
+
+api.get('/subjects', (req, res) => {
+    student.fetchSubjects().then((subjects)=>{
+        return res.json({subjects})
+    }).catch(()=>{
+        res.sendStatus(500)
+    })
+})
+
 /**
  * Middleware to exclude the non-authorised api calls to authorised api calls 
  */
 api.use((req, res, next) => {
-    console.log(req.session)
-    if (req.session.token) {
+    if (req.user) {
         const allType = ['/removeFirst']
         const teacherType = ['/headers', '/studentdata']
         const studentType = []
-        auth.getUserInfo(req.session.token).then((user)=>{
-            console.log(user)
-            if (allType.includes(req.path)) {
-                next()
-            } else if (teacherType.includes(req.path) && user.type === 1) {
-                next()
-            } else if (studentType.includes(req.path) && user.type === 0) {
-                next()
-            } else {
-                res.sendStatus(401)
-            }
-        }).catch(()=>{
-            res.sendStatus(401)
-        })
+        const user = req.user
+        if (allType.includes(req.path)) {
+            next()
+        } else if (teacherType.includes(req.path) && user.type === 1) {
+            next()
+        } else if (studentType.includes(req.path) && user.type === 0) {
+            next()
+        } else {
+            return res.sendStatus(401)
+        }
     } else {
-        res.sendStatus(401)
+        return res.sendStatus(401)
     }
 })
 
+/**
+ * Global authenticated
+ */
 api.post('/removeFirst', (req, res) => {
     auth.removeFirst(req.session.token).then(()=>{
         res.status(200).json({})
@@ -121,25 +155,29 @@ api.post('/removeFirst', (req, res) => {
     })
 })
 
+/**
+ * Teacher Authenticated
+ */
 api.get('/headers', (req, res) => {
-    // might need api call to fetch headers
-    res.json({ headers: [['שם פרטי', 'first'], ['שם משפחה', 'last'], ['אני לא יודע', 'hand']] })
+    res.json({ headers: [['סטודנט', 'student'], ['נושא', 'subject'], ['פעיל', 'active']] })
 })
 
 api.get('/studentdata', (req, res) =>  {
-    res.json({ data: [
-        { key: 12, first: 'Oded', last: 'Shapira', hand: 'I am not sure' },
-        { key: 15, first: 'Ido', last: 'Shavit', hand: 'Please' },
-        { key: 17, first: 'Nir', last: 'Shahar', hand: 'ree' },
-        { key: 18, first: 'Noa', last: 'Shapira', hand: 'pool' }
-      ]
+    teacher.fetchData(req.user.id).then((data)=>{
+        res.json({data})
+    }).catch(()=>{
+        res.sendStatus(500)
     })
 })
 
+/**
+ * Administrator Authenticated
+ */
 
-app.use('/api', api)
-app.use('/', express.static(path.join(__dirname, 'website')))
-app.get('*', (req, res)=>{
+
+app.use('/api', api) // let the app use the authentication via /api/*
+app.use('/', express.static(path.join(__dirname, 'website'))) // serve the website on /
+app.get('*', (req, res)=>{ // 404 back to the website
     res.redirect('/#/lost')
 })
 app.listen(3000)
