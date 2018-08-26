@@ -1,14 +1,15 @@
 const bcrypt = require('bcrypt') // one of the best password hashers, it auto generates salts to prevent rainbow tables.
 const database = require('./database')
 const LocalStrategy = require('passport-local').Strategy
-const xregexp = require('xregexp')
+const XRegExp = require('xregexp')
+
 
 const idregex = /^[0-9]{9}$/
 const passregex = /^.{8,}$/
-const nameregex = xregexp('^(\\pL|\\s){4, 45}$').compile()
+const nameregex = XRegExp.build('^(\\pL|\\s){4, 45}$')
 const subjectregex = /^.{2,45}$/
 const phoneregex = /^[0-9+-]{7,45}$/
-const emailregex = xregexp('^[\\p{L}\\p{N}]+@\\p{L}+[.]\\p{L}+$').compile() // https://stackoverflow.com/questions/19461943/how-to-validate-a-unicode-email
+const emailregex = XRegExp.build('^[\\p{L}\\p{N}]+@\\p{L}+[.]\\p{L}+$') // https://stackoverflow.com/questions/19461943/how-to-validate-a-unicode-email
 const clregex = /^[0-9]+$/
 
 function validDetails(data) {

@@ -113,6 +113,10 @@ exports.addClass = async function (name) {
     return queryingAsync('INSERT INTO classes (name) VALUES (?)', name)
 }
 
+exports.removeClass = async function (id) {
+    return queryingAsync('DELETE FROM classes WHERE id = ?', id)
+}
+
 exports.addSubject = async function (name) {
     return queryingAsync('INSERT INTO subjects (name) VALUES (?)', name)
 }

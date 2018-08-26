@@ -143,7 +143,7 @@ api.post('/adduser', (req, res) => {
 api.use((req, res, next) => {
     if (req.user) {
         const allType = ['/removeFirst']
-        const adminType = ['/addclass', '/studentdata', '/headers']
+        const adminType = ['/addclass', '/studentdata', '/headers', '/removeclass']
         const teacherType = ['/headers', '/studentdata']
         const studentType = []
         const user = req.user
@@ -202,6 +202,14 @@ api.post('/addclass', (req, res) => {
         res.sendStatus(200)
     }).catch((error)=>{
         res.status(400).json(error) // invalid name
+    })
+})
+
+api.post('/removeclass', (req, res) => {
+    admin.removeClass(req.body.id).then(()=>{
+        res.sendStatus(200)
+    }).catch((error)=>{
+        res.status(400).json(error) // invalid id
     })
 })
 
