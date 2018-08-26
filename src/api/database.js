@@ -33,10 +33,10 @@ async function queryingAsync(query, values) {
  * @param {string} id 
  * @param {string} name 
  * @param {string} password hashed password
+ * @param {string} subjectname the name of the subject
  */
-exports.registerTeacher = async function (id, name, pass) {
-    console.log(id + ' ' + name + ' ' + pass + ' ')
-    return queryingAsync('CALL registerTeacher(?, ?, ?);', [id, name, pass])
+exports.registerTeacher = async function (id, name, pass, subjectname) {
+    return queryingAsync('CALL registerTeacher(?, ?, ?, ?);', [id, name, pass, subjectname])
 }
 
 /**
@@ -46,11 +46,10 @@ exports.registerTeacher = async function (id, name, pass) {
  * @param {string} password hashed password
  * @param {string} phone 
  * @param {string} email 
- * @param {number} subject1 all the other subjects will be added in the user settings later
  * @param {number} cl 
  */
-exports.registerStudent = async function (id, name, pass, phone, email, subject1, cl) {
-    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, subject1, cl ])
+exports.registerStudent = async function (id, name, pass, phone, email, cl) {
+    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ])
 }
 
 /**
@@ -90,15 +89,23 @@ exports.fetchData = async function (id) {
     FROM matches \
     WHERE matches.rakazim_id = ? \
     JOIN users ON users.id = matches.students_id \
-    JOIN subjects ON subjects.id = matches.subjects_id')
+    JOIN subjects ON subjects.id = matches.subjects_id', id)
 }
 
 exports.fetchClasses = async function () {
-    return queryingAsync('SELECT classes.name from classes')
+    return queryingAsync('SELECT * from classes')
 }
 
 exports.fetchSubjects = async function () {
-    return queryingAsync('SELECT subjects.name from subjects')
+    return queryingAsync('SELECT rakazim.name as name, rakazim.subj_id as id from rakazim')
+}
+
+exports.addClass = async function (name) {
+    return queryingAsync('INSERT INTO classes (name) VALUES (?)', name)
+}
+
+exports.addSubject = async function (name) {
+    return queryingAsync('INSERT INTO subjects (name) VALUES (?)', name)
 }
 
 process.on('SIGTERM', ()=>{

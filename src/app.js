@@ -5,6 +5,7 @@ const path = require('path')
 const auth = require('./api/authorization')
 const teacher = require('./api/teacher')
 const student = require('./api/student')
+const admin = require('./api/admin')
 const MySQLStore = require('express-mysql-session')(session) // this will remember logged in users and save it in mysql
 const connection = require('./api/database').connection
 const cors = require('cors')
@@ -90,7 +91,7 @@ api.post('/registerteacher', (req, res) => {
         res.sendStatus(401)
         return
     }
-    auth.registerTeacher(req.body.id, req.body.name, req.body.password).then(()=>{
+    auth.registerTeacher(req.body.id, req.body.name, req.body.password, req.body.subject).then(()=>{
         res.sendStatus(200)
     }).catch((err)=>{
         res.status(400).send({error: err.message})
@@ -98,7 +99,7 @@ api.post('/registerteacher', (req, res) => {
 })
 
 api.post('/register', (req, res) => {
-    auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.subject1, req.body.cl).then(()=>{
+    auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.cl).then(()=>{
         res.sendStatus(200)
     }).catch(()=>{
         res.sendStatus(400)
@@ -127,6 +128,7 @@ api.get('/subjects', (req, res) => {
 api.use((req, res, next) => {
     if (req.user) {
         const allType = ['/removeFirst']
+        const adminType = ['/addclass']
         const teacherType = ['/headers', '/studentdata']
         const studentType = []
         const user = req.user
@@ -135,6 +137,8 @@ api.use((req, res, next) => {
         } else if (teacherType.includes(req.path) && user.type === 1) {
             next()
         } else if (studentType.includes(req.path) && user.type === 0) {
+            next()
+        } else if (adminType.includes(req.path) && user.type === 2) {
             next()
         } else {
             return res.sendStatus(401)
@@ -174,6 +178,21 @@ api.get('/studentdata', (req, res) =>  {
  * Administrator Authenticated
  */
 
+api.post('/addclass', (req, res) => {
+    admin.addClass(req.body.name).then(()=>{
+        res.sendStatus(200)
+    }).catch(()=>{
+        res.sendStatus(400) // invalid name
+    })
+})
+
+api.post('/addsubject', (req, res) => {
+    admin.addSubject(req.body.name).then(()=>{
+        res.sendStatus(200)
+    }).catch(()=>{
+        res.sendStatus(400) // invalid name
+    })
+})
 
 app.use('/api', api) // let the app use the authentication via /api/*
 app.use('/', express.static(path.join(__dirname, 'website'))) // serve the website on /
