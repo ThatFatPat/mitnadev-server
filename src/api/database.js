@@ -82,14 +82,15 @@ exports.removeFirst = async function (id) {
 }
 
 /**
- * Basically it will take the student's name, the subject's name and whether this match is active by the teacher's id
+ * Basically it will take the student's name, the class's name and whether this match is active by the teacher's id
  */
 exports.fetchData = async function (id) {
-    return queryingAsync('SELECT matches.active, users.name as student, subjects.name as subject \
+    return queryingAsync('SELECT matches.active, users.name as student, classes.name as cl \
     FROM matches \
     WHERE matches.rakazim_id = ? \
     JOIN users ON users.id = matches.students_id \
-    JOIN subjects ON subjects.id = matches.subjects_id', id)
+    JOIN students WHERE students.id = matches.students_id \
+    JOIN classes ON classes.id = students.class', id)
 }
 
 exports.fetchClasses = async function () {

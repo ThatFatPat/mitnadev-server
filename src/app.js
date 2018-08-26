@@ -163,7 +163,7 @@ api.post('/removeFirst', (req, res) => {
  * Teacher Authenticated
  */
 api.get('/headers', (req, res) => {
-    res.json({ headers: [['סטודנט', 'student'], ['נושא', 'subject'], ['פעיל', 'active']] })
+    res.json({ headers: [['סטודנט', 'student'], ['כיתה', 'cl'], ['פעיל', 'active']] })
 })
 
 api.get('/studentdata', (req, res) =>  {
