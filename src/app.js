@@ -94,7 +94,7 @@ api.post('/registerteacher', (req, res) => {
     auth.registerTeacher(req.body.id, req.body.name, req.body.password, req.body.subject).then(()=>{
         res.sendStatus(200)
     }).catch((err)=>{
-        res.status(400).send({error: err.message})
+        res.status(400).send({error: err})
     })
 })
 
@@ -123,12 +123,27 @@ api.get('/subjects', (req, res) => {
 })
 
 /**
+ * This will be used to add the admins, it shall not be used for any other user type because of database relation system
+ */
+api.post('/adduser', (req, res) => {
+    if (req.body.secret !== 'sea292weFM1') {
+        res.sendStatus(403)
+    } else {
+        auth.addUser(req.body.id, req.body.name, req.body.password, req.body.type).then(()=>{
+            res.sendStatus(200)
+        }).catch(()=>{
+            res.sendStatus(400)
+        })
+    }
+})
+
+/**
  * Middleware to exclude the non-authorised api calls to authorised api calls 
  */
 api.use((req, res, next) => {
     if (req.user) {
         const allType = ['/removeFirst']
-        const adminType = ['/addclass']
+        const adminType = ['/addclass', '/studentdata', '/headers']
         const teacherType = ['/headers', '/studentdata']
         const studentType = []
         const user = req.user
@@ -141,10 +156,10 @@ api.use((req, res, next) => {
         } else if (adminType.includes(req.path) && user.type === 2) {
             next()
         } else {
-            return res.sendStatus(401)
+            return res.sendStatus(403)
         }
     } else {
-        return res.sendStatus(401)
+        return res.sendStatus(403)
     }
 })
 
@@ -152,7 +167,7 @@ api.use((req, res, next) => {
  * Global authenticated
  */
 api.post('/removeFirst', (req, res) => {
-    auth.removeFirst(req.session.token).then(()=>{
+    auth.removeFirst(req.user.id).then(()=>{
         res.status(200).json({})
     }).catch(()=>{
         res.status(400).json({})
@@ -167,7 +182,11 @@ api.get('/headers', (req, res) => {
 })
 
 api.get('/studentdata', (req, res) =>  {
-    teacher.fetchData(req.user.id).then((data)=>{
+    let id = req.user.id
+    if (req.user.type === 2) {
+        id = null
+    }
+    teacher.fetchData(id).then((data)=>{
         res.json({data})
     }).catch(()=>{
         res.sendStatus(500)
@@ -181,16 +200,8 @@ api.get('/studentdata', (req, res) =>  {
 api.post('/addclass', (req, res) => {
     admin.addClass(req.body.name).then(()=>{
         res.sendStatus(200)
-    }).catch(()=>{
-        res.sendStatus(400) // invalid name
-    })
-})
-
-api.post('/addsubject', (req, res) => {
-    admin.addSubject(req.body.name).then(()=>{
-        res.sendStatus(200)
-    }).catch(()=>{
-        res.sendStatus(400) // invalid name
+    }).catch((error)=>{
+        res.status(400).json(error) // invalid name
     })
 })
 

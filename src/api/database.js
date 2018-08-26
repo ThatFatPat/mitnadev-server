@@ -21,6 +21,7 @@ async function queryingAsync(query, values) {
     return new Promise ((resolve, reject)=>{
         connection.query(query, values, (err, res) => {
             if (err) {
+                console.log(err)
                 reject(err)
             }
             resolve(res)
@@ -49,7 +50,7 @@ exports.registerTeacher = async function (id, name, pass, subjectname) {
  * @param {number} cl 
  */
 exports.registerStudent = async function (id, name, pass, phone, email, cl) {
-    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ])
+    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ])
 }
 
 /**
@@ -85,12 +86,19 @@ exports.removeFirst = async function (id) {
  * Basically it will take the student's name, the class's name and whether this match is active by the teacher's id
  */
 exports.fetchData = async function (id) {
-    return queryingAsync('SELECT matches.active, users.name as student, classes.name as cl \
-    FROM matches \
-    WHERE matches.rakazim_id = ? \
-    JOIN users ON users.id = matches.students_id \
-    JOIN students WHERE students.id = matches.students_id \
-    JOIN classes ON classes.id = students.class', id)
+    if (id == null) {
+        return queryingAsync(`SELECT matches.active, users.name student, classes.name cl
+        FROM matches
+        JOIN users ON users.id = matches.students_id
+        JOIN students ON students.id = matches.students_id
+        JOIN classes ON classes.id = students.class`)
+    }
+    return queryingAsync(`SELECT matches.active, users.name student, classes.name cl
+    FROM matches
+    JOIN users ON users.id = matches.students_id
+    JOIN students ON students.id = matches.students_id
+    JOIN classes ON classes.id = students.class
+    WHERE matches.rakazim_id = ?`, id)
 }
 
 exports.fetchClasses = async function () {
@@ -107,6 +115,10 @@ exports.addClass = async function (name) {
 
 exports.addSubject = async function (name) {
     return queryingAsync('INSERT INTO subjects (name) VALUES (?)', name)
+}
+
+exports.addUser = async function (id, name, password, type) {
+    return queryingAsync('INSERT INTO users (id, name, pass, type, firstLogin) VALUES (?, ?, ?, ?, 0)', [id, name, password, type])
 }
 
 process.on('SIGTERM', ()=>{

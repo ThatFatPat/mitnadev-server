@@ -1,7 +1,10 @@
 const database = require('./database')
+const xregexp = require('xregexp')
+
+const nameregex = xregexp('^(\\pL|\\s){4, 45}$').compile()
 
 exports.addClass = async (name) => {
-    if (!/^(\p{L}|[0-9\'\"]){0,45}$/.test(name)) {
+    if (!nameregex.test(name)) {
         throw 'Invalid name'
     }
     return database.addClass(name)
