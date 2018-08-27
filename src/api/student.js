@@ -7,3 +7,7 @@ exports.fetchClasses = async () => {
 exports.fetchSubjects = async () => {
     return database.fetchSubjects()
 }
+
+exports.fetchMatches = async (id) => {
+    return database.fetchMatches(id)
+}

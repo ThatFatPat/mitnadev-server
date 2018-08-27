@@ -106,7 +106,15 @@ exports.fetchClasses = async function () {
 }
 
 exports.fetchSubjects = async function () {
-    return queryingAsync('SELECT rakazim.name as name, rakazim.subj_id as id from rakazim')
+    return queryingAsync(`SELECT subj_id id, subjectname subject FROM rakazim`)
+}
+
+exports.fetchMatches = async function (id) {
+    return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active
+    FROM matches
+    JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
+    JOIN users ON rakazim.id = users.id
+    WHERE matches.students_id = ?`, id)
 }
 
 exports.addClass = async function (name) {
@@ -123,6 +131,10 @@ exports.addSubject = async function (name) {
 
 exports.addUser = async function (id, name, password, type) {
     return queryingAsync('INSERT INTO users (id, name, pass, type, firstLogin) VALUES (?, ?, ?, ?, 0)', [id, name, password, type])
+}
+
+exports.addMatch = async function (s_id, r_id, active) {
+    return queryingAsync('INSERT INTO matches (')
 }
 
 process.on('SIGTERM', ()=>{

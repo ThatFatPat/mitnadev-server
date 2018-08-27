@@ -142,10 +142,10 @@ api.post('/adduser', (req, res) => {
  */
 api.use((req, res, next) => {
     if (req.user) {
-        const allType = ['/removeFirst']
+        const allType = ['/removeFirst', '/user']
         const adminType = ['/addclass', '/studentdata', '/headers', '/removeclass']
         const teacherType = ['/headers', '/studentdata']
-        const studentType = []
+        const studentType = ['/matches']
         const user = req.user
         if (allType.includes(req.path)) {
             next()
@@ -170,6 +170,26 @@ api.post('/removeFirst', (req, res) => {
     auth.removeFirst(req.user.id).then(()=>{
         res.status(200).json({})
     }).catch(()=>{
+        res.status(400).json({})
+    })
+})
+
+api.get('/user', (req, res) => {
+    if (req.user) {
+        res.json(req.user)
+    } else {
+        res.status(401).json({})
+    }
+})
+
+/**
+ *  Student Authenticated
+ */
+
+api.get('/matches', (req, res) => {
+    student.fetchMatches(id).then((matches) => {
+        res.json({matches})
+    }).catch(err=>{
         res.status(400).json({})
     })
 })

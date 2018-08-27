@@ -1,7 +1,7 @@
 const database = require('./database')
 const XRegExp = require('xregexp')
 
-const nameregex = XRegExp.build('^(\\pL|\\s){4,45}$')
+const nameregex = XRegExp.build('^.{4,45}$')
 
 exports.addClass = async (name) => {
     if (!nameregex.test(name)) {

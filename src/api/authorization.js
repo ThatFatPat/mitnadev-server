@@ -6,7 +6,7 @@ const XRegExp = require('xregexp')
 
 const idregex = /^[0-9]{9}$/
 const passregex = /^.{8,}$/
-const nameregex = XRegExp.build('^(\\pL|\\s){4, 45}$')
+const nameregex = XRegExp.build('^(\\pL|\\s){4,45}$')
 const subjectregex = /^.{2,45}$/
 const phoneregex = /^[0-9+-]{7,45}$/
 const emailregex = XRegExp.build('^[\\p{L}\\p{N}]+@\\p{L}+[.]\\p{L}+$') // https://stackoverflow.com/questions/19461943/how-to-validate-a-unicode-email
