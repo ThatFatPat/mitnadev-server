@@ -238,4 +238,4 @@ app.use('/', express.static(path.join(__dirname, 'website'))) // serve the websi
 app.get('*', (req, res)=>{ // 404 back to the website
     res.redirect('/#/lost')
 })
-app.listen(3000)
+app.listen(80)
