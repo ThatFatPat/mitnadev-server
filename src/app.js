@@ -46,7 +46,7 @@ passport.deserializeUser((user, done)=>{
  * enable cors
  */
 app.use('*', cors({
-    origin: 'http://localhost:8080',
+    origin: 'https://evening-springs-71425.herokuapp.com',
     credentials: true
 }))
 
