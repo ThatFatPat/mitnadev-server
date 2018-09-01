@@ -11,6 +11,7 @@ const connection = require('./api/database').connection
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const store = new MySQLStore({}, connection)
+const port = process.env.PORT || 8080;
 
 const app = express()
 
@@ -238,4 +239,4 @@ app.use('/', express.static(path.join(__dirname, 'website'))) // serve the websi
 app.get('*', (req, res)=>{ // 404 back to the website
     res.redirect('/#/lost')
 })
-app.listen(80)
+app.listen(port)
