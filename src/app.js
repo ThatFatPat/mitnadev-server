@@ -199,7 +199,7 @@ api.get('/matches', (req, res) => {
  * Teacher Authenticated
  */
 api.get('/headers', (req, res) => {
-    res.json({ headers: [['סטודנט', 'student'], ['כיתה', 'cl'], ['פעיל', 'active']] })
+    res.json({ headers: [['סטודנט', 'student'], ['כיתה', 'cl'], ['נושא', 'subjectname']] })
 })
 
 api.get('/studentdata', (req, res) =>  {
