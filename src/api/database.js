@@ -86,7 +86,7 @@ exports.removeFirst = async function (id) {
  * Basically it will take the student's name, the class's name and whether this match is active by the teacher's id
  */
 exports.fetchData = async function (id) {
-    if (id == null) {
+    /*if (id == null) {
         return queryingAsync(`SELECT matches.active, users.name student, classes.name cl
         FROM matches
         JOIN users ON users.id = matches.students_id
@@ -98,7 +98,16 @@ exports.fetchData = async function (id) {
     JOIN users ON users.id = matches.students_id
     JOIN students ON students.id = matches.students_id
     JOIN classes ON classes.id = students.class
-    WHERE matches.rakazim_id = ?`, id)
+    WHERE matches.rakazim_id = ?`, id)*/
+    if (id == null){
+        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name FROM rakazim JOIN users WHERE users.type = 1')
+    }
+    else{
+        subj_id = queryingAsync('SELECT subj_id FROM rakazim WHERE id = ?' ,id)
+        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name \
+         FROM rakazim JOIN users \
+         WHERE users.type = 1 AND (users.subj_id1 = ? OR users.subj_id2 = ? OR  users.subj_id3 = ?)' ,[subj_id, subj_id, subj_id])
+    }
 }
 
 exports.fetchClasses = async function () {
@@ -116,6 +125,11 @@ exports.fetchMatches = async function (id) {
     JOIN users ON rakazim.id = users.id
     WHERE matches.students_id = ?`, id)
 }
+
+/*exports.fetchMatchingStudents = async function(id){
+    subj_id = queryingAsync('SELECT subj_id FROM rakazim WHERE id = ?' ,id)
+    return queryingAsync('SELECT students.id id, rakazim.subjectname subject, users.name name, FROM rakazim JOIN students WHERE (students.subj_id1 = ? OR students.subj_id2 = ? OR students.subj_id3 = ?' ,subj_id)
+}*/
 
 exports.addClass = async function (name) {
     return queryingAsync('INSERT INTO classes (name) VALUES (?)', name)
