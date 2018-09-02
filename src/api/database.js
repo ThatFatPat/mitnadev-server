@@ -100,12 +100,17 @@ exports.fetchData = async function (id) {
     JOIN classes ON classes.id = students.class
     WHERE matches.rakazim_id = ?`, id)*/
     if (id == null){
-        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name FROM rakazim JOIN users WHERE users.type = 1')
+        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name FROM rakazim JOIN users WHERE users.type = 0')
     }
     else{
         subj_id = queryingAsync('SELECT subj_id FROM rakazim WHERE id = ?' ,id)
         console.log(subj_id + " blabla " + typeof subj_id)
-        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name, classes.name class name FROM rakazim RIGHT JOIN users ON (users.subj_id1 = rakazim.subj_id OR users.subj_id2 = rakazim.subj_id OR  users.subj_id3 = rakazim.subj_id) JOIN classes ON users.cl = classes.id WHERE users.type = 0 AND rakazim.id = ?', id)
+        return queryingAsync(`SELECT users.id id, rakazim.subjectname subject, users.name, classes.name class name
+        FROM rakazim 
+        RIGHT JOIN users ON (users.subj_id1 = rakazim.subj_id OR users.subj_id2 = rakazim.subj_id OR  users.subj_id3 = rakazim.subj_id) 
+        JOIN students ON students.id = users.id 
+        JOIN classes ON classes.id = students.class 
+        WHERE users.type = 0 AND rakazim.id = ?`, id)
     }
 }
 
