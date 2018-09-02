@@ -105,7 +105,7 @@ exports.fetchData = async function (id) {
     else{
         subj_id = queryingAsync('SELECT subj_id FROM rakazim WHERE id = ?' ,id)
         console.log(subj_id + " blabla " + typeof subj_id)
-        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name FROM rakazim JOIN users WHERE users.type = 0 AND (users.subj_id1 = ? OR users.subj_id2 = ? OR  users.subj_id3 = ?)' , [subj_id.id, subj_id.id, subj_id.id])
+        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name FROM rakazim RIGHT JOIN users ON (users.subj_id1 = rakazim.subj_id OR users.subj_id2 = rakazim.subj_id OR  users.subj_id3 = rakazim.subj_id) WHERE users.type = 0 AND rakazim.id = ?', id)
     }
 }
 
