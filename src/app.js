@@ -11,7 +11,7 @@ const connection = require('./api/database').connection
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const store = new MySQLStore({}, connection)
-const port = process.env.PORT || 8080;
+const port = 3000;
 
 const app = express()
 
@@ -46,7 +46,7 @@ passport.deserializeUser((user, done)=>{
  * enable cors
  */
 app.use('*', cors({
-    origin: 'https://evening-springs-71425.herokuapp.com',
+    origin: 'http://localhost:8080',
     credentials: true
 }))
 
