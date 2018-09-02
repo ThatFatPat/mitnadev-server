@@ -106,7 +106,7 @@ exports.fetchData = async function (id) {
         subj_id = queryingAsync('SELECT subj_id FROM rakazim WHERE id = ?' ,id)
         return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name \
          FROM rakazim JOIN users \
-         WHERE users.type = 1 AND (users.subj_id1 = ? OR users.subj_id2 = ? OR  users.subj_id3 = ?)' ,[subj_id, subj_id, subj_id])
+         WHERE users.type = 0 AND (users.subj_id1 = ? OR users.subj_id2 = ? OR  users.subj_id3 = ?)' , [subj_id, subj_id, subj_id])
     }
 }
 
