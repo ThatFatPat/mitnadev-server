@@ -1,10 +1,14 @@
+const conf = require('../config')
 const mysql = require('mysql')
 
+// Choose run configuration.
+const config = conf.choose_config(process.env.NODE_ENV)
+
 const connection = mysql.createConnection({
-    host: 'db4free.net',
-    user: 'b3fb81d1947453',
-    password: '31d7c5a7',
-    database: 'mitnadev',
+    host: config.db_host,
+    user: config.db_username,
+    password: config.db_pass,
+    database: config.db_name,
 })
 
 exports.connection = connection

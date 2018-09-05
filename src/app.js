@@ -1,3 +1,4 @@
+const conf = require('./config')
 const express = require('express')
 const passport = require('passport') // this will be used to remember logged in users
 const session = require('express-session')
@@ -11,9 +12,11 @@ const connection = require('./api/database').connection
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const store = new MySQLStore({}, connection)
-const port = process.env.PORT || 8080;
 
 const app = express()
+
+// Choose run configuration.
+const config = conf.choose_config(process.env.NODE_ENV)
 
 app.use(express.json())
 app.use(cookieParser('shhh it is a secret'))
@@ -46,7 +49,7 @@ passport.deserializeUser((user, done)=>{
  * enable cors
  */
 app.use('*', cors({
-    origin: 'https://evening-springs-71425.herokuapp.com',
+    origin: config.cors,
     credentials: true
 }))
 
@@ -239,4 +242,4 @@ app.use('/', express.static(path.join(__dirname, 'website'))) // serve the websi
 app.get('*', (req, res)=>{ // 404 back to the website
     res.redirect('/#/lost')
 })
-app.listen(port)
+app.listen(config.port)
