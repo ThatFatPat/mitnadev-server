@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl">
     <head>
         <% include ../templates/head %>
         <link rel="stylesheet" type="text/css" href="/static/login.css">
@@ -22,7 +22,7 @@
                           <input type="text" class="form-control" id="id" name="id" aria-describedby="idHelp" placeholder="ת.ז."
                           oninvalid="this.setCustomValidity('הכנס תעודת זהות תקנית')" pattern="[0-9]{9}" required>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group ">
                           <i class="fa fa-lock"></i>
                           <label for="password">סיסמה</label>
                           <input type="password" class="form-control" id="password" name="password" placeholder="סיסמה" required>
@@ -31,7 +31,7 @@
                           <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
                           <label class="form-check-label" for="rememberMe" >זכור אותי</label>
                       </div>
-                      <div class="form-group form-check">
+                      <div class="form-text">
                         <a id="inputError"> <%= errorMessage %> </a>
                       </div>
                     <a role="button" class="btn btn-secondary" href="/register">הירשם</a>

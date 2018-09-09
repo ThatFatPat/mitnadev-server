@@ -38,7 +38,7 @@ async function hashPass(password) {
 
 exports.strategy = new LocalStrategy({usernameField: 'id', passwordField: 'password'}, (id, password, done)=>{
     if (!validDetails({id, password})) {
-        return done(null, false)
+        return done('Invalid details')
     }
     database.getHashedPass(id).then((hashedpass)=>{
         bcrypt.compare(password, hashedpass).then((match)=>{

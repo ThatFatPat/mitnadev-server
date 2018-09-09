@@ -7,16 +7,20 @@ const auth = require('./api/authorization')
 const teacher = require('./api/teacher')
 const student = require('./api/student')
 const admin = require('./api/admin')
+const bodyParser = require('body-parser')
 const MySQLStore = require('express-mysql-session')(session) // this will remember logged in users and save it in mysql
 const connection = require('./api/database').connection
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const store = new MySQLStore({}, connection)
 const helmet = require('helmet')
+const ejs = require('ejs')
+const flash = require('connect-flash')
+
 
 const app = express()
 
-app.set('views', 'src/views')
+app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 // Choose run configuration.
@@ -35,6 +39,9 @@ app.use(session({
         secure: false
     }
 }))
+app.use(bodyParser.json())
+app.use(bodyParser({extended: true}))
+app.use(flash())
 
 /**
  * Initialize passport
@@ -66,7 +73,14 @@ app.get('/', (req, res)=>{
     if (!req.user) {
         res.redirect('/login')
     } else if (req.user.type === 0) {
-        sendTemplate(req, res, 'student')
+        student.fetchMatches(req.user.id).then((matches) => {
+            sendTemplate(req, res, 'student', {
+                headers: [['סטודנט', 'name'], ['כיתה', 'class'], ['נושא', 'subject']],
+                matches
+             })
+        }).catch(err=>{
+            sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
+        })
     } else if (req.user.type === 1) {
         sendTemplate(req, res, 'teacher')
     }
@@ -79,13 +93,20 @@ app.get('/login', (req, res)=>{
     if (req.user) {
         res.redirect('/')
     } else {
-        sendTemplate(req, res, 'login', {errorMessage: ''})
+        let error = req.flash('error')[0]
+        if (!error){
+            error = ''
+        }
+        console.log(error);
+        sendTemplate(req, res, 'login', {errorMessage: error})
     }
 })
 
 /**
  * This will be used to authenticate and retrieve user information
  */
+
+/* OLD LOGIN
 app.post('/user', (req, res, next) => {
     id = req.body.id
     password = req.body.password
@@ -109,10 +130,24 @@ app.post('/user', (req, res, next) => {
         })
     })(req, res, next);
 })
+*/
+
+app.post('/user', (req, res, next)=>{
+    rememberMe = req.body.rememberMe
+    if (rememberMe) {
+        req.session.cookie.maxAge = 604800000
+    }
+    next()
+},
+    passport.authenticate('local', { successRedirect: '/',
+                                                   failureRedirect: '/login',
+                                                   failureFlash: 'תעודת זהות או סיסמה שגויה' 
+                                                })
+)
 
 app.get('/logout', (req, res) => {
     req.logOut()
-    res.sendStatus(200)
+    res.redirect('/')
 })
 
 app.post('/registerteacher', (req, res) => {
@@ -125,6 +160,19 @@ app.post('/registerteacher', (req, res) => {
     }).catch((err)=>{
         res.status(400).send({error: err})
     })
+})
+
+app.get('/register', (req, res) =>{
+    sendTemplate(req, res, 'register')
+})
+
+app.get('/registerS', (req, res)=>{
+    student.fetchClasses().then((classes)=>{
+        sendTemplate(req, res, 'registerS', {classes})
+    }).catch(()=>{
+        sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
+    })
+    sendTemplate(req, res, 'registerS', {})
 })
 
 app.post('/register', (req, res) => {
@@ -169,7 +217,7 @@ app.post('/adduser', (req, res) => {
 app.use('/static', express.static(path.join(__dirname, 'static'))) 
 app.use('/assets', express.static(path.join(__dirname, 'assets')))
 app.get('*', (req, res)=>{ // 404 back to the website
-    sendTemplate('error', {errorno: 404, error: 'Page Not Found'})
+    sendTemplate(req, res, 'error', {errorno: 404, error: 'Page Not Found'})
 })
 
 /**
@@ -196,25 +244,6 @@ app.use((req, res, next) => {
     } else {
         return res.sendStatus(403)
     }
-})
-
-/**
- *  Student Authenticated
- */
-
-app.get('/matches', (req, res) => {
-    student.fetchMatches(id).then((matches) => {
-        res.json({matches})
-    }).catch(err=>{
-        res.status(400).json({})
-    })
-})
-
-/**
- * Teacher Authenticated
- */
-app.get('/headers', (req, res) => {
-    res.json({ headers: [['סטודנט', 'name'], ['כיתה', 'class'], ['נושא', 'subject']] })
 })
 
 app.get('/studentdata', (req, res) =>  {

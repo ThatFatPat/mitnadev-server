@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <% include ../templates/head %>
+        <link rel="stylesheet" type="text/css" href="/static/registerS.css">
+    </head>
+    <body>
+        <div class="container-fluid" id="registers">
+            <!-- <div class="row">
+                <div class="col-12 filler"></div>
+            </div> -->
+            <div class="row justify-content-center" id="logo-row">
+              <img class="logo " src="../assets/logo.png"><br>
+            </div>
+            <div class="row justify-content-center align-items-center login-row">
+              <div class="d-flex col-md-4 justify-content-center">
+                <div class="login-backdrop shadow">
+                  <form action="/register" method="post">
+                    <div class="form-group">
+                      <i class="fas fa-id-card-alt"></i>
+                      <label for="id">תעודת זהות</label>
+                      <input type="text" class="form-control" id="id" name="id" aria-describedby="idHelp" placeholder="ת.ז."
+                             oninvalid="this.setCustomValidity('הכנס תעודת זהות תקנית')" pattern="^[0-9]{9}$" required>
+                    </div>
+                    <div class="form-group">
+                      <i class="fa fa-user"></i>
+                      <label for="name">שם</label>
+                      <input type="text" class="form-control" id="name" name="name"  placeholder="שם"
+                             oninvalid="this.setCustomValidity('רק אותיות ורווחים מותרים')" pattern="^(\p{L}|\s){4,45}$" required>
+                    </div>
+                    <div class="form-group">
+                      <i class="fas fa-at"></i>
+                      <label for="email">אימייל</label>
+                      <input type="email" class="form-control" id="email" name="email" placeholder="אימייל" required/>
+                    </div>
+                    <div class="form-group">
+                      <i class="fas fa-phone"></i>
+                      <label for="phone">טלפון</label>
+                      <input type="text" class="form-control" id="phone" name="phone" placeholder="טלפון" pattern="^[0-9+-]{7,15}$" required/>
+                    </div>
+                    <div class="form-group">
+                      <i class="fas fa-users"></i>
+                      <label for="class">כיתה</label>
+                      <select class="form-control" name="cl" id="class" required>
+                        <% for (let option of classes) { %>
+                        <option key="<%=option.id%>" value="<%=option.id%>">
+                          <%= option.name %>
+                        </option>
+                        <%}%>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <i class="fa fa-lock"></i>
+                      <label for="password">סיסמה</label>
+                      <input type="password" class="form-control" id="password" v-model="password" placeholder="סיסמה" minlength="8" required>
+                    </div>
+                    <div class="form-group">
+                      <i class="fa fa-lock"></i>
+                      <label for="vpassword">וידוי סיסמה</label>
+                      <input type="password" @change="vpassword !== password ? $event.target.setCustomValidity('Passwords must match') : $event.target.setCustomValidity('')" class="form-control" id="vpassword" v-model="vpassword" placeholder="סיסמה" minlength="8" required>
+                    </div>
+                    <div class="form-group form-check">
+                      <a id="inputError"> {{ errorMessage }} </a>
+                    </div>
+                    <button type="button" class="btn btn-secondary" @click="$router.back()">חזור</button>
+                    <button type="submit" class="btn btn-primary" @click="registerT(id, name, password, email, phone, selected)">הירשם</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col-12 filler"></div>
+            </div> -->
+          </div>
+    </body>
+</html>

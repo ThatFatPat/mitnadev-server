@@ -1,0 +1,21 @@
+#registers {
+    margin-top: 0.2in;
+}
+#logo-row {
+    padding-bottom: 7vh;
+}
+.logo {
+    height: 20vh;
+    width: 20vh;
+}
+.login-backdrop{
+    border-radius: 4px;
+    background: #ffffff;
+    padding: 20px 40px;
+}
+.form-group{
+    text-align: right;
+}
+    input.form-control:invalid {
+    border-color: red;
+}
