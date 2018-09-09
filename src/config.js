@@ -1,7 +1,5 @@
-console.log(process.env.NODE_ENV)
-
 module.exports.dev = {
-        port : process.env.PORT || 3000,
+        port : 3000,
         cors : "http://localhost:8080",
         db_username : "root",
         db_pass : "212702377",
