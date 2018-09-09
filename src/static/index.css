@@ -1,4 +1,19 @@
-@import "../../node_modules/bootstrap/scss/bootstrap";
+* {
+  font-family: "Alef Hebrew",
+               “Helvetica Neue”,
+               Helvetica,
+               Arial,
+               sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+
+body {
+  background-size: cover;
+  background: linear-gradient(#03b7ff, #81dbff) no-repeat fixed;
+}
+
 #NavBar{
   height: 50px;
 }

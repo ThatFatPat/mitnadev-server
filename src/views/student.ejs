@@ -2,8 +2,47 @@
 <html>
     <head>
         <% include ../templates/head %>
+        <link rel="stylesheet" src="/static/student.css">
+        <script src="/static/filterScript.js"></script>
     </head>
     <body>
         <% include ../templates/navbar %>
+        
+        <div id="student" class="container-fluid">
+            <div id="subjecttable" class="container">
+            <button class="btn mr-auto filter-btn" onclick="toggleFilter()">
+                סינון  <i class="fas fa-filter"></i>
+            </button>
+            <form id="filterform" hidden>
+                <label for="textfil">הכנס טקסט:</label>
+                <input type="text" id="textfil">
+            </form>
+            </div>
+            <div class="responsive-table">
+            <table dir="rtl" id="studentTable" class="table table-bordered table-condensed">
+                <thead>
+                <tr>
+                <% for (let elem of headers) { %>
+                    <th key="<%=elem[1]%>" scope="col"><%=elem[0]%></th>
+                <% } %>
+                </tr>
+                </thead>
+                <% for (let data of matches) {%>
+                <tr key="<%=data.key%>">
+                    <% for (let elem of headers) { %>
+                    <td key="<%=elem[1]%>">
+                        <%=data[elem[1]] %>
+                    </td>
+                    <%}%>
+                </tr>
+                <%}%>
+                <% if (matches.length === 0) { %>
+                <tr>
+                <td colspan="<%=headers.length%>">לא נמצאו נושאים</td>
+                </tr>
+                <%}%>
+            </table>
+            </div>
+        </div>
     </body>
 </html>

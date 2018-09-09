@@ -16,6 +16,9 @@ const helmet = require('helmet')
 
 const app = express()
 
+app.set('views', 'src/views')
+app.set('view engine', 'ejs')
+
 // Choose run configuration.
 const config = conf.choose_config(process.env.NODE_ENV)
 app.use(helmet())
@@ -53,8 +56,6 @@ app.use('*', cors({
     origin: config.cors,
     credentials: true
 }))
-
-app.set('view engine', 'ejs')
 const sendTemplate = (req, res, template, data = {}) => {
     res.render(template, Object.assign({
         user: req.user
@@ -78,7 +79,7 @@ app.get('/login', (req, res)=>{
     if (req.user) {
         res.redirect('/')
     } else {
-        sendTemplate(req, res, 'login')
+        sendTemplate(req, res, 'login', {errorMessage: ''})
     }
 })
 
@@ -104,7 +105,7 @@ app.post('/user', (req, res, next) => {
             if (err) {
                 return res.sendStatus(500)
             }
-            return res.json(user)
+            return res.redirect('/')
         })
     })(req, res, next);
 })
@@ -240,7 +241,7 @@ app.post('/addclass', (req, res) => {
     })
 })
 
-api.post('/removeclass', (req, res) => {
+app.post('/removeclass', (req, res) => {
     admin.removeClass(req.body.id).then(()=>{
         res.sendStatus(200)
     }).catch((error)=>{

@@ -1,0 +1,28 @@
+#login {
+    margin-top: 0.2in;
+  }
+  #logo-row {
+    padding-bottom: 7vh;
+  }
+  .logo {
+    height: 20vh;
+    width: 20vh;
+  }
+  input.form-control:invalid {
+    border-color: red;
+  }
+  #inputError {
+    color: red;
+    font-size: 14px;
+  }
+  .form-group{
+      text-align: right;
+  }
+  .form-check-label{
+      margin-right: 1.3em;
+  }
+  .login-backdrop{
+      border-radius: 4px;
+      background: #ffffff;
+      padding: 20px 40px;
+  }

@@ -2,7 +2,7 @@ module.exports.dev = {
         port : 3000,
         cors : "http://localhost:8080",
         db_username : "root",
-        db_pass : "212702377",
+        db_pass : "i9HE6K#a2U3p",
         db_host : "127.0.0.1",
         db_name : "mitnadev"
 }
