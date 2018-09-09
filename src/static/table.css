@@ -1,0 +1,14 @@
+.container {
+    margin-top: 7px;
+}
+.filter-btn {
+    margin-bottom: 10px;
+    float: right;
+}
+.responsive-table {
+    text-align: center;
+}
+.table {
+    border-radius: 4px;
+    background: white;
+}

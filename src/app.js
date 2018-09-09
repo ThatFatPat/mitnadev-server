@@ -40,7 +40,7 @@ app.use(session({
     }
 }))
 app.use(bodyParser.json())
-app.use(bodyParser({extended: true}))
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(flash())
 
 /**
@@ -97,41 +97,18 @@ app.get('/login', (req, res)=>{
         if (!error){
             error = ''
         }
-        console.log(error);
-        sendTemplate(req, res, 'login', {errorMessage: error})
+        let success = req.flash('success')[0]
+        if (!success){
+            success = ''
+        }
+        console.log(success);
+        sendTemplate(req, res, 'login', {errorMessage: error, successMessage: success})
     }
 })
 
 /**
  * This will be used to authenticate and retrieve user information
  */
-
-/* OLD LOGIN
-app.post('/user', (req, res, next) => {
-    id = req.body.id
-    password = req.body.password
-    rememberMe = req.body.rememberMe
-    if (rememberMe) {
-        req.session.cookie.maxAge = 604800000
-    }
-    passport.authenticate('local', (err, user, info)=>{
-        if (err) {
-            console.log(err)
-            return res.sendStatus(400)
-        }
-        if (!user) {
-            return res.sendStatus(401)
-        }
-        req.login(user, err=>{
-            if (err) {
-                return res.sendStatus(500)
-            }
-            return res.redirect('/')
-        })
-    })(req, res, next);
-})
-*/
-
 app.post('/user', (req, res, next)=>{
     rememberMe = req.body.rememberMe
     if (rememberMe) {
@@ -168,7 +145,9 @@ app.get('/register', (req, res) =>{
 
 app.get('/registerS', (req, res)=>{
     student.fetchClasses().then((classes)=>{
-        sendTemplate(req, res, 'registerS', {classes, errorMessage: ''})
+        const errorMessage = req.session.errorMessage ? req.session.errorMessage : ''
+        req.session.errorMessage = ''
+        sendTemplate(req, res, 'registerS', {classes, errorMessage})
     }).catch(()=>{
         sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
     })
@@ -176,9 +155,12 @@ app.get('/registerS', (req, res)=>{
 
 app.post('/register', (req, res) => {
     auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.cl).then(()=>{
-        res.sendStatus(200)
-    }).catch(()=>{
-        res.sendStatus(400)
+        req.flash('success', 'הרשמה נקלטה בהצלחה')
+        res.redirect('/login')
+    }).catch((e)=>{
+        console.error(e)
+        req.session.errorMessage = 'אנא ודאו כי הפרטים שהזנתם תקינים ונסו שנית'
+        res.redirect('/registerS')
     })
 })
 

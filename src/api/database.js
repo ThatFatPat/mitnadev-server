@@ -41,8 +41,20 @@ async function queryingAsync(query, values) {
  * @param {string} subjectname the name of the subject
  */
 exports.registerTeacher = async function (id, name, pass, subjectname) {
-    return queryingAsync('CALL registerTeacher(?, ?, ?, ?);', [id, name, pass, subjectname])
-}
+    return new Promise ((resolve, reject) => {
+        connection.beginTransaction((err)=>{
+            if (err) reject(err);
+
+            connection.query('CALL registerTeacher(?, ?, ?, ?);', [id, name, pass, subjectname], function (error) {
+                if (error) {
+                    return connection.rollback(()=>{
+                        reject(error)
+                    })
+                } else {resolve()}
+            })
+        })
+    }
+)}
 
 /**
  * this will register a student
@@ -54,8 +66,20 @@ exports.registerTeacher = async function (id, name, pass, subjectname) {
  * @param {number} cl 
  */
 exports.registerStudent = async function (id, name, pass, phone, email, cl) {
-    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ])
-}
+    return new Promise ((resolve, reject) => {
+        connection.beginTransaction((err)=>{
+            if (err) reject(err);
+
+            connection.query('CALL registerStudent(?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ], function (error) {
+                if (error) {
+                    return connection.rollback(()=>{
+                        reject(error)
+                    })
+                } else {resolve()}
+            })
+        })
+    }
+)}
 
 /**
  * get the hashed password of a user

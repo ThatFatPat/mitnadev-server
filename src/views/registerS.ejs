@@ -2,6 +2,12 @@
     <head>
         <% include ../templates/head %>
         <link rel="stylesheet" type="text/css" href="/static/registerS.css">
+        <script>
+            function validatePassword(){
+              const vpassword = document.getElementById('vpassword'), password =  document.getElementById('password')
+              vpassword !== password ? $event.target.setCustomValidity('אנא ודאו כי הסיסמאות זהות') : $event.target.setCustomValidity('')
+            }
+        </script>
     </head>
     <body>
         <div class="container-fluid" id="registers">
@@ -51,12 +57,12 @@
                     <div class="form-group">
                       <i class="fa fa-lock"></i>
                       <label for="password">סיסמה</label>
-                      <input type="password" class="form-control" id="password" v-model="password" placeholder="סיסמה" minlength="8" required>
+                      <input type="password" class="form-control" id="password" name="password" placeholder="סיסמה" minlength="8" required>
                     </div>
                     <div class="form-group">
                       <i class="fa fa-lock"></i>
                       <label for="vpassword">וידוי סיסמה</label>
-                      <input type="password" @change="vpassword !== password ? $event.target.setCustomValidity('Passwords must match') : $event.target.setCustomValidity('')" class="form-control" id="vpassword" v-model="vpassword" placeholder="סיסמה" minlength="8" required>
+                      <input type="password" onchange="validatePassword()" class="form-control" id="vpassword" v-model="vpassword" placeholder="סיסמה" minlength="8" required>
                     </div>
                     <div class="form-group form-check">
                       <a id="inputError"> <%= errorMessage %> </a>
