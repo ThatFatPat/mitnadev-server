@@ -1,4 +1,4 @@
-<html>
+<html dir="rtl">
     <head>
         <% include ../templates/head %>
         <link rel="stylesheet" type="text/css" href="/static/registerS.css">
@@ -12,7 +12,7 @@
               <img class="logo " src="../assets/logo.png"><br>
             </div>
             <div class="row justify-content-center align-items-center login-row">
-              <div class="d-flex col-md-4 justify-content-center">
+              <div class="d-flex col-md-8 justify-content-center">
                 <div class="login-backdrop shadow">
                   <form action="/register" method="post">
                     <div class="form-group">
@@ -59,10 +59,10 @@
                       <input type="password" @change="vpassword !== password ? $event.target.setCustomValidity('Passwords must match') : $event.target.setCustomValidity('')" class="form-control" id="vpassword" v-model="vpassword" placeholder="סיסמה" minlength="8" required>
                     </div>
                     <div class="form-group form-check">
-                      <a id="inputError"> {{ errorMessage }} </a>
+                      <a id="inputError"> <%= errorMessage %> </a>
                     </div>
-                    <button type="button" class="btn btn-secondary" @click="$router.back()">חזור</button>
-                    <button type="submit" class="btn btn-primary" @click="registerT(id, name, password, email, phone, selected)">הירשם</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">חזור</button>
+                    <button type="submit" class="btn btn-primary">הירשם</button>
                   </form>
                 </div>
               </div>

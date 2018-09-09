@@ -168,11 +168,10 @@ app.get('/register', (req, res) =>{
 
 app.get('/registerS', (req, res)=>{
     student.fetchClasses().then((classes)=>{
-        sendTemplate(req, res, 'registerS', {classes})
+        sendTemplate(req, res, 'registerS', {classes, errorMessage: ''})
     }).catch(()=>{
         sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
     })
-    sendTemplate(req, res, 'registerS', {})
 })
 
 app.post('/register', (req, res) => {
