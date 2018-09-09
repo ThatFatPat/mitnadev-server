@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../templates/head %>
+        <link rel="stylesheet" type="text/css" href="/assets/login.css">
+    </head>
+    <body>
+    <div class="container-fluid" id="login">
+        <!-- <div class="row">
+            <div class="col-12 filler"></div>
+        </div> -->
+        <div class="row justify-content-center" id="logo-row">
+          <img class="logo " src="/assets/logo.png"><br>
+      </div>
+        <div class="row justify-content-center align-items-center login-row">
+            <div class="d-flex col-md-4 justify-content-center">
+                <div class="login-backdrop shadow">
+                  <form action="/user" method="post">
+                      <div class="form-group">
+                          <i class="fa fa-user"></i>
+                          <label for="id">תעודת זהות</label>
+                          <input type="text" class="form-control" id="id" name="id" aria-describedby="idHelp" placeholder="ת.ז."
+                          oninvalid="this.setCustomValidity('הכנס תעודת זהות תקנית')" pattern="[0-9]{9}" required>
+                      </div>
+                      <div class="form-group">
+                          <i class="fa fa-lock"></i>
+                          <label for="password">סיסמה</label>
+                          <input type="password" class="form-control" id="password" name="password" placeholder="סיסמה" required>
+                      </div>
+                      <div class="form-group form-check">
+                          <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                          <label class="form-check-label" for="rememberMe" >זכור אותי</label>
+                      </div>
+                      <div class="form-group form-check">
+                        <a id="inputError"> <%= errorMessage %> </a>
+                      </div>
+                    <a role="button" class="btn btn-secondary" href="/register">הירשם</a>
+                    <button type="submit" class="btn btn-primary">התחבר</button>
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

@@ -12,12 +12,13 @@ const connection = require('./api/database').connection
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const store = new MySQLStore({}, connection)
+const helmet = require('helmet')
 
 const app = express()
 
 // Choose run configuration.
 const config = conf.choose_config(process.env.NODE_ENV)
-
+app.use(helmet())
 app.use(express.json())
 app.use(cookieParser('shhh it is a secret'))
 app.use(session({
@@ -53,15 +54,38 @@ app.use('*', cors({
     credentials: true
 }))
 
-/**
- * initialize api
- */
-const api = express()
+app.set('view engine', 'ejs')
+const sendTemplate = (req, res, template, data = {}) => {
+    res.render(template, Object.assign({
+        user: req.user
+    }, data))
+}
+
+app.get('/', (req, res)=>{
+    if (!req.user) {
+        res.redirect('/login')
+    } else if (req.user.type === 0) {
+        sendTemplate(req, res, 'student')
+    } else if (req.user.type === 1) {
+        sendTemplate(req, res, 'teacher')
+    }
+    else if (req.user.type === 2) {
+        sendTemplate(req, res, 'admin')
+    }
+})
+
+app.get('/login', (req, res)=>{
+    if (req.user) {
+        res.redirect('/')
+    } else {
+        sendTemplate(req, res, 'login')
+    }
+})
 
 /**
  * This will be used to authenticate and retrieve user information
  */
-api.post('/user', (req, res, next) => {
+app.post('/user', (req, res, next) => {
     id = req.body.id
     password = req.body.password
     rememberMe = req.body.rememberMe
@@ -85,12 +109,12 @@ api.post('/user', (req, res, next) => {
     })(req, res, next);
 })
 
-api.post('/logout', (req, res) => {
+app.get('/logout', (req, res) => {
     req.logOut()
     res.sendStatus(200)
 })
 
-api.post('/registerteacher', (req, res) => {
+app.post('/registerteacher', (req, res) => {
     if (req.body.secret !== 'iO2fSA78fS') {
         res.sendStatus(401)
         return
@@ -102,7 +126,7 @@ api.post('/registerteacher', (req, res) => {
     })
 })
 
-api.post('/register', (req, res) => {
+app.post('/register', (req, res) => {
     auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.cl).then(()=>{
         res.sendStatus(200)
     }).catch(()=>{
@@ -110,7 +134,7 @@ api.post('/register', (req, res) => {
     })
 })
 
-api.get('/classes', (req, res) => {
+app.get('/classes', (req, res) => {
     student.fetchClasses().then((classes)=>{
         res.json({classes})
     }).catch(()=>{
@@ -118,7 +142,7 @@ api.get('/classes', (req, res) => {
     })
 })
 
-api.get('/subjects', (req, res) => {
+app.get('/subjects', (req, res) => {
     student.fetchSubjects().then((subjects)=>{
         return res.json({subjects})
     }).catch(()=>{
@@ -129,7 +153,7 @@ api.get('/subjects', (req, res) => {
 /**
  * This will be used to add the admins, it shall not be used for any other user type because of database relation system
  */
-api.post('/adduser', (req, res) => {
+app.post('/adduser', (req, res) => {
     if (req.body.secret !== 'sea292weFM1') {
         res.sendStatus(403)
     } else {
@@ -141,10 +165,16 @@ api.post('/adduser', (req, res) => {
     }
 })
 
+app.use('/static', express.static(path.join(__dirname, 'static'))) 
+app.use('/assets', express.static(path.join(__dirname, 'assets')))
+app.get('*', (req, res)=>{ // 404 back to the website
+    sendTemplate('error', {errorno: 404, error: 'Page Not Found'})
+})
+
 /**
  * Middleware to exclude the non-authorised api calls to authorised api calls 
  */
-api.use((req, res, next) => {
+app.use((req, res, next) => {
     if (req.user) {
         const allType = ['/removeFirst', '/user']
         const adminType = ['/addclass', '/studentdata', '/headers', '/removeclass']
@@ -168,29 +198,10 @@ api.use((req, res, next) => {
 })
 
 /**
- * Global authenticated
- */
-api.post('/removeFirst', (req, res) => {
-    auth.removeFirst(req.user.id).then(()=>{
-        res.status(200).json({})
-    }).catch(()=>{
-        res.status(400).json({})
-    })
-})
-
-api.get('/user', (req, res) => {
-    if (req.user) {
-        res.json(req.user)
-    } else {
-        res.status(401).json({})
-    }
-})
-
-/**
  *  Student Authenticated
  */
 
-api.get('/matches', (req, res) => {
+app.get('/matches', (req, res) => {
     student.fetchMatches(id).then((matches) => {
         res.json({matches})
     }).catch(err=>{
@@ -201,11 +212,11 @@ api.get('/matches', (req, res) => {
 /**
  * Teacher Authenticated
  */
-api.get('/headers', (req, res) => {
+app.get('/headers', (req, res) => {
     res.json({ headers: [['סטודנט', 'name'], ['כיתה', 'class'], ['נושא', 'subject']] })
 })
 
-api.get('/studentdata', (req, res) =>  {
+app.get('/studentdata', (req, res) =>  {
     let id = req.user.id
     if (req.user.type === 2) {
         id = null
@@ -221,7 +232,7 @@ api.get('/studentdata', (req, res) =>  {
  * Administrator Authenticated
  */
 
-api.post('/addclass', (req, res) => {
+app.post('/addclass', (req, res) => {
     admin.addClass(req.body.name).then(()=>{
         res.sendStatus(200)
     }).catch((error)=>{
@@ -235,11 +246,5 @@ api.post('/removeclass', (req, res) => {
     }).catch((error)=>{
         res.status(400).json(error) // invalid id
     })
-})
-
-app.use('/api', api) // let the app use the authentication via /api/*
-app.use('/', express.static(path.join(__dirname, 'website'))) // serve the website on /
-app.get('*', (req, res)=>{ // 404 back to the website
-    res.redirect('/#/lost')
 })
 app.listen(config.port)

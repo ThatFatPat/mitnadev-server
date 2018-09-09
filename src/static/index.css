@@ -1,0 +1,69 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
+#NavBar{
+  height: 50px;
+}
+.navbar {
+  width: 100%;
+  height: 100%;
+  padding: 0 0 0 0;
+}
+.heb {
+  text-align: right;
+}
+a.logo.navbar-brand:hover {
+    background-color: darkgray;
+    color: black;
+}
+.navbar-brand{
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.navbar-header{
+  height: 100%;
+}
+.navbar-text {
+    padding: 0;
+}
+.navbar-nav{
+  height: 100%;
+}
+ #logindropdown.pressed{
+  background-color: #d6d3d3;
+  color: black;
+}
+a#logindropdown.nav-link{
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.login{
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+}
+a.nav-link{
+  height: 100%;
+  margin: auto;
+  cursor: pointer;
+}
+a.nav-link:hover {
+    background-color: darkgray;
+    color: black;
+}
+.dropdown-item {
+  text-align: right;
+}
+*.unselectable {
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
+}
