@@ -82,7 +82,14 @@ app.get('/', (req, res)=>{
             sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
         })
     } else if (req.user.type === 1) {
-        sendTemplate(req, res, 'teacher')
+        teacher.fetchMatches(req.user.id).then((matches) => {
+            sendTemplate(req, res, 'teacher', {
+                headers: [['סטודנט', 'name'], ['כיתה', 'class']],
+                matches
+             })
+        }).catch(err=>{
+            sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
+        })
     }
     else if (req.user.type === 2) {
         sendTemplate(req, res, 'admin')
@@ -101,7 +108,6 @@ app.get('/login', (req, res)=>{
         if (!success){
             success = ''
         }
-        console.log(success);
         sendTemplate(req, res, 'login', {errorMessage: error, successMessage: success})
     }
 })

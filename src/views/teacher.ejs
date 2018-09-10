@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../templates/head %>
+        <link rel="stylesheet" href="/static/table.css">
+        <script>
+        function studenttablebutton_onclick(key){
+            console.log(key)
+        }
+        </script>
+    </head>
+    <body>
+        <% include ../templates/navbar %>
+        <%- include('../templates/table', {tableid: "studenttable", visible: "visible", headers: headers, data: matches, button: true, button_text: 'עריכה'}); %>
+    </body>
+</html>

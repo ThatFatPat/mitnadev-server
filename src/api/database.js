@@ -113,31 +113,23 @@ exports.removeFirst = async function (id) {
 /**
  * Basically it will take the student's name, the class's name and whether this match is active by the teacher's id
  */
-exports.fetchData = async function (id) {
-    /*if (id == null) {
-        return queryingAsync(`SELECT matches.active, users.name student, classes.name cl
-        FROM matches
-        JOIN users ON users.id = matches.students_id
-        JOIN students ON students.id = matches.students_id
-        JOIN classes ON classes.id = students.class`)
-    }
-    return queryingAsync(`SELECT matches.active, users.name student, classes.name cl
-    FROM matches
-    JOIN users ON users.id = matches.students_id
-    JOIN students ON students.id = matches.students_id
-    JOIN classes ON classes.id = students.class
-    WHERE matches.rakazim_id = ?`, id)*/
-    if (id == null){
-        return queryingAsync('SELECT users.id id, rakazim.subjectname subject, users.name name FROM rakazim JOIN users WHERE users.type = 0')
-    }
-    else{
-        subj_id = queryingAsync('SELECT subj_id FROM rakazim WHERE id = ?' ,id)
-        console.log(subj_id + " blabla " + typeof subj_id)
+exports.fetchStudents = async function (id) {
+    if (id == null){ // For Admin
         return queryingAsync(`SELECT users.id id, rakazim.subjectname subject, users.name name, classes.name class
         FROM rakazim 
-        RIGHT JOIN users ON (users.subj_id1 = rakazim.subj_id OR users.subj_id2 = rakazim.subj_id OR  users.subj_id3 = rakazim.subj_id) 
-        JOIN students ON students.id = users.id 
+        JOIN students_subjects ON rakazim.subj_id = students_subjects.subject_id
+        JOIN students ON subjects_students.student_id = students.id
         JOIN classes ON classes.id = students.class 
+        JOIN users ON users.id = students.id
+        WHERE users.type = 0)`)
+    }
+    else{
+        return queryingAsync(`SELECT users.id id, rakazim.subjectname subject, users.name name, classes.name class
+        FROM rakazim 
+        JOIN students_subjects ON rakazim.subj_id = students_subjects.subject_id
+        JOIN students ON students_subjects.student_id = students.id
+        JOIN classes ON classes.id = students.class 
+        JOIN users ON users.id = students.id
         WHERE users.type = 0 AND rakazim.id = ?`, id)
     }
 }
@@ -150,12 +142,30 @@ exports.fetchSubjects = async function () {
     return queryingAsync(`SELECT subj_id id, subjectname subject FROM rakazim`)
 }
 
-exports.fetchMatches = async function (id) {
+exports.fetchMatchesStudent = async function (id) {
     return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active
     FROM matches
     JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
     JOIN users ON rakazim.id = users.id
-    WHERE matches.students_id = ?`, id)
+    WHERE matches.student_id = ?`, id)
+}
+
+exports.fetchMatchesTeacher = async function (id) {
+    if (id==null){ // For Admin
+        return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active active, classes.name class
+        FROM matches
+        JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
+        JOIN students ON matches.student_id = students.id
+        JOIN users ON students.id = users.id
+        JOIN classes ON students.class = classes.id)`)}
+    else {
+    return queryingAsync(`SELECT matches.id id, users.name name, matches.active active, classes.name class
+    FROM matches
+    JOIN rakazim ON rakazim.id = matches.rakazim_id
+    JOIN students ON matches.student_id = students.id
+    JOIN users ON students.id = users.id
+    JOIN classes ON students.class = classes.id
+    WHERE matches.rakazim_id = ?`, id)}
 }
 
 /*exports.fetchMatchingStudents = async function(id){

@@ -9,5 +9,5 @@ exports.fetchSubjects = async () => {
 }
 
 exports.fetchMatches = async (id) => {
-    return database.fetchMatches(id)
+    return database.fetchMatchesStudent(id)
 }

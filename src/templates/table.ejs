@@ -10,32 +10,36 @@
     }
 
 
-    $("#textfil").on('change keyup paste', function () {
-        filterTable();
-    });
+    // $("#textfil<%= tableid %>").on('change keyup paste', function () {
+    //     filterTable();
+    // });)
+    setInterval(function() { filterTable(); }, 100);
     function filterTable() {
         var input, filter, table, tr, td, i;
         input = document.getElementById("textfil<%= tableid %>")
         filter = input.value.toUpperCase();
-        table = document.getElementById("<%= tableid %>");
+        table = document.getElementById("<%= tableid %>").getElementsByTagName("tbody")[0];
         tr = table.getElementsByTagName("tr");
 
         // Loop through all table rows, and hide those who don't match the search query
         for (i = 0; i < tr.length; i++) {
             tds = tr[i].getElementsByTagName("td");
-            let filters = true
+            let displaythis = false
             for (let td of tds) {
-                if (td.innerHTML.toUpperCase().indexOf(filter) === -1) {
-                    filters = false
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    displaythis = true
                     break
                 } 
             }
-            if (filters) {
+            if (displaythis) {
                 tr[i].style.display = "";
             } else {
                 tr[i].style.display = "none";
             }
         }            
+    }
+    function button_wrapper(item){
+        <%= tableid %>button_onclick(item.parentElement.parentElement.getAttribute('key'))
     }
 </script>
 <div class="container">
@@ -45,7 +49,7 @@
         </button>
         <form id="filterform<%= tableid %>" hidden>
             <label for="textfil<%= tableid %>">הכנס טקסט:</label>
-            <input type="text" id="textfil" name="filtertext<%= tableid %>">
+            <input type="text" id="textfil<%= tableid %>" name="filtertext<%= tableid %>">
         </form>
   </div>
   <div class="responsive-table" dir="rtl">
@@ -54,14 +58,22 @@
         <tr>
         <% for (let elem of headers) { %>
           <th key="<%=elem[1]%>" scope="col"><%= elem[0] %></th>
-        <%}%>          
+        <%}%>
+        <% if (button) { %>
+        <th key="edit<%= tableid %>" width="10%"></th>
+        <%}%>
         </tr>
       </thead>
       <% for (let data_item of data) { %>
-      <tr key="<%=data_item.student%>">
+      <tr key="<%=data_item.id%>">
         <% for (let elem of headers) { %>
         <td key="<%=elem[1]%>">
          <%= data_item[elem[1]] %>
+        </td>
+        <%}%>
+        <% if (button) { %>
+        <td key="edit<%= tableid %>">
+         <button class="btn btn-info btn-sm" onclick="button_wrapper(this)"><%= button_text %></button>
         </td>
         <%}%>
       </tr>
