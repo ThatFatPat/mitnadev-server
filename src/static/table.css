@@ -1,5 +1,5 @@
 .container {
-    margin-top: 7px;
+    margin-top: 10px;
 }
 .filter-btn {
     margin-bottom: 10px;
@@ -9,9 +9,10 @@
     text-align: center;
 }
 .table {
-    border-radius: 4px;
     background: white;
 }
 .table td{
     vertical-align: middle;
+    max-width: 600px;
+    word-wrap: break-word;
 }

@@ -33,6 +33,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store,
+    rolling: true,
     cookie: {
         maxAge: 900000,
         credentials: true,
@@ -139,9 +140,12 @@ app.post('/registerteacher', (req, res) => {
         return
     }
     auth.registerTeacher(req.body.id, req.body.name, req.body.password, req.body.subject).then(()=>{
-        res.sendStatus(200)
-    }).catch((err)=>{
-        res.status(400).send({error: err})
+        req.flash('success', 'הרשמה נקלטה בהצלחה')
+        res.redirect('/login')
+    }).catch((e)=>{
+        console.error(e)
+        req.session.errorMessage = 'אנא ודאו כי הפרטים שהזנתם תקינים ונסו שנית'
+        res.redirect('/registerS')
     })
 })
 
@@ -157,6 +161,11 @@ app.get('/registerS', (req, res)=>{
     }).catch(()=>{
         sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
     })
+})
+app.get('/registerT', (req, res)=>{
+        const errorMessage = req.session.errorMessage ? req.session.errorMessage : ''
+        req.session.errorMessage = ''
+        sendTemplate(req, res, 'registerT', {errorMessage})
 })
 
 app.post('/register', (req, res) => {
@@ -208,27 +217,28 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')))
  * Middleware to exclude the non-authorised api calls to authorised api calls 
  */
 app.use((req, res, next) => {
+    const adminType = ['/addclass', '/removeclass']
+    const teacherType = ['/addconnection', '/matchdata', '/editconnetion']
+    const studentType = []
+    const need_auth = adminType.concat(teacherType)
     if (req.user) {
-        const allType = ['/removeFirst', '/user']
-        const adminType = ['/addclass', '/studentdata', '/headers', '/removeclass']
-        const teacherType = ['/headers', '/studentdata', '/addconnection']
-        const studentType = ['/matches']
         const user = req.user
-        if (allType.includes(req.path)) {
-            next()
-        } else if (teacherType.includes(req.path) && user.type === 1) {
-            next()
-        } else if (studentType.includes(req.path) && user.type === 0) {
-            next()
-        } else if (adminType.includes(req.path) && user.type === 2) {
-            next()
-        } else {
-            res.status(403)
+        if (teacherType.includes(req.path) && user.type !== 1) {
             return sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
+        } else if (studentType.includes(req.path) && user.type !== 0) {
+            return sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
+        } else if (adminType.includes(req.path) && user.type !== 2) {
+            return sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
+        } else {
+            next()
         }
     } else {
-        res.status(403)
-        return sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
+        if (need_auth.includes(req.path)) {
+            res.status(403)
+            return sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
+        } else {
+            next()
+        }
     }
 })
 
@@ -258,7 +268,7 @@ app.post('/removeclass', (req, res) => {
 app.get('/addconnection', (req, res) => {
     teacher.fetchStudents(req.user.id).then((students) => {
         sendTemplate(req, res, 'addconnection', {
-            headers: teacher.fetchMatchesHeaders(),
+            headers: teacher.fetchStudentsHeaders(),
             students
         })
     }).catch((err)=>{
@@ -267,7 +277,6 @@ app.get('/addconnection', (req, res) => {
 })
 
 app.post('/addconnection', (req, res) => {
-    console.log(req.body)
     const student = req.body.studenttableradio
     const teacher_name = req.body.teacher
     const desc = req.body.desc
@@ -283,6 +292,39 @@ app.post('/addconnection', (req, res) => {
             return sendTemplate(req, res, 'error', {errorno: 500, error: err})
         })
     }
+})
+
+app.post('/editconnection', (req, res) => {
+    const teacher_name = req.body.teacher
+    const desc = req.body.desc
+    let active = req.body.active
+    const key = req.body.key
+    if (!key) {
+        return sendTemplate(req, res, 'error', {errorno: 400, error: 'חסר מפתח'})
+    }
+    active = !!active // booleanify active
+    if (desc && desc.length > 255) {
+        return sendTemplate(req, res, 'error', {errorno: 400, error: 'תיאור ארוך מדי'})
+    } else if (teacher_name && teacher_name > 255) {
+        return sendTemplate(req, res, 'error', {errorno: 400, error: 'שם מורה ארוך מדי'})
+    } else {
+        teacher.editConnection(desc, teacher_name, key, active).then(()=>{
+            return res.redirect('/')
+        }).catch((err)=>{
+            return sendTemplate(req, res, 'error', {errorno: 500, error: err})
+        })
+    }
+})
+
+app.post('/matchdata', (req, res)=>{
+    const key = req.body.key
+    teacher.fetchMatch(key, req.user.id).then((match)=>{
+        if (match) {
+            res.json(match)
+        } else {
+            res.send('null')
+        }
+    })
 })
 
 //=================================

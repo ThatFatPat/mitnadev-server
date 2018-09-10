@@ -1,4 +1,4 @@
-#registers {
+#registert {
     margin-top: 0.2in;
     margin-bottom: 30px;
 }
@@ -17,6 +17,6 @@
 .form-group{
     text-align: right;
 }
-    input.form-control:invalid {
+input.form-control:invalid {
     border-color: red;
 }

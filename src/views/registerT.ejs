@@ -1,0 +1,77 @@
+<html dir="rtl">
+    <head>
+        <% include ../templates/head %>
+        <link rel="stylesheet" type="text/css" href="/static/registerT.css">
+        <script>
+            function validatePassword(){
+              const vpassword = document.getElementById('vpassword'), password =  document.getElementById('password')
+              vpassword !== password ? $event.target.setCustomValidity('אנא ודאו כי הסיסמאות זהות') : $event.target.setCustomValidity('')
+            }
+        </script>
+        <style>
+            
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid" id="registert">
+            <!-- <div class="row">
+                <div class="col-12 filler"></div>
+            </div> -->
+            <div class="row justify-content-center" id="logo-row">
+            <img class="logo " src="../assets/logo.png"><br>
+            </div>
+            <div class="row justify-content-center align-items-center login-row">
+            <div class="d-flex col-md-4 justify-content-center">
+                <div class="login-backdrop shadow">
+                <form>
+                    <div class="form-group">
+                    <i class="fas fa-id-card-alt"></i>
+                    <label for="id">תעודת זהות</label>
+                    <input type="text" class="form-control" id="id" name="id" aria-describedby="idHelp" placeholder="ת.ז."
+                            oninvalid="this.setCustomValidity('הכנס תעודת זהות תקנית')" pattern="^[0-9]{9}$" required>
+                    </div>
+                    <div class="form-group">
+                    <i class="fa fa-user"></i>
+                    <label for="name">שם</label>
+                    <input type="text" class="form-control" id="name" name="name"  placeholder="שם"
+                            oninvalid="this.setCustomValidity('רק אותיות ורווחים מותרים')" pattern="^(\p{L}|\s){4,45}$" required>
+                    </div>
+                    <div class="form-group">
+                    <i class="fas fa-book-open"></i>
+                    <label for="subject">נושא</label>
+                    <input type="text" class="form-control" id="subject" name="subject"  placeholder="נושא" pattern="^(.){2,45}$" required>
+                    </div>
+                    <div class="form-group">
+                    <i class="fa fa-lock"></i>
+                    <label for="password">סיסמה</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="סיסמה" minlength="8" required>
+                    </div>
+                    <div class="form-group">
+                    <i class="fa fa-lock"></i>
+                    <label for="vpassword">וידוי סיסמה</label>
+                    <input type="password" onchange="validatePassword()" class="form-control" id="vpassword" name="vpassword" placeholder="סיסמה" minlength="8" required>
+                    </div>
+                    <div class="form-group">
+                    <i class="fas fa-user-secret"></i>
+                    <label for="password">קוד סודי</label>
+                    <input type="password" class="form-control" id="secret" name="secret" placeholder="קוד סודי" required>
+                    </div>
+                    <div class="form-group form-check">
+                    <% if (errorMessage) { %>
+                    <div class="alert alert-danger" role="alert">
+                    <%= errorMessage %>
+                    </div>
+                    <%}%>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">חזור</button>
+                    <button type="submit" class="btn btn-primary">הירשם</button>
+                </form>
+                </div>
+            </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col-12 filler"></div>
+            </div> -->
+        </div>
+    </body>
+</html>

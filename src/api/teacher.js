@@ -11,9 +11,26 @@ exports.fetchMatches = async (id) => {
 }
 
 exports.fetchMatchesHeaders = () => {
-    return [['סטודנט', 'name'], ['כיתה', 'class'], ['מורה אחראית', 'teacher'], ['תיאור', 'desc']]
+    return [['תלמיד/ה', 'name'], ['כיתה', 'class'], ['מורה אחראי/ת', 'teacher'], ['תיאור', 'desc'], ['פעיל', 'active']]
+}
+exports.fetchStudentsHeaders = () =>{
+    return [['תלמיד/ה', 'name'], ['כיתה', 'class']]
+}
+exports.addConnection = async (student, teacher, desc, rakaz) => {
+    return database.addConnection(student, teacher, desc, rakaz)
 }
 
-exports.addConnection = (student, teacher, desc, rakaz) => {
-    return database.addConnection(student, teacher, desc, rakaz)
+exports.editConnection = async (desc, teacher, key, active) => {
+    return database.editConnection(desc, teacher, key, active)
+}
+
+exports.fetchMatch = async (key, id) => {
+    const match = (await database.fetchMatch(key))[0]
+    console.log(match)
+    if (!id){
+        return match
+    }
+    else{
+        return match.rakazim_id === id ? match : null
+    }
 }

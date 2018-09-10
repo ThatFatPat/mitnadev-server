@@ -4,13 +4,52 @@
         <% include ../templates/head %>
         <link rel="stylesheet" href="/static/table.css">
         <script>
-        function studenttablebutton_onclick(key){
-            console.log(key)
+        let currentMatch = null
+        function viewconnectioncancel_onclick(key){
+            $('#viewconnectionform').attr('hidden', 'true')
         }
+        function studenttablebutton_onclick(key){
+            updateView(key)
+        }
+        function updateView(key){
+            matchdata = $.post("/matchdata", {key}, (data)=>{
+                $('#student_name').text(data.name)
+                $('#key').val(key)
+                $('#teacher').val(data.teacher)
+                $('#student-info').text(`כיתה: ${data.class}`)
+                $('#description').val(data.desc)
+                $('#active').val(data.active)
+                if(data.active){
+                    $('#active').attr('checked', 'true')
+                }
+                $('#viewconnectionform').removeAttr('hidden')
+                currentMatch = data
+            })
+        }
+        function viewconnectionsave_onclick(key){
+            res = $.post("/editconnection", {key: currentMatch.id,  teacher: $('#teacher').text(), desc: $('#description').val(), })
+        }
+        function replaceActive() {
+            for(let x of $("[key=active]")){
+                if (x.innerHTML.trim() === '1'){
+                //V
+                    x.innerHTML = '✔️'
+                } else if (x.innerHTML.trim() === '0') {
+                //X
+                    x.innerHTML = '❌'
+                }
+               
+            }                                    
+        }
+        $(document).ready(replaceActive)
         </script>
     </head>
     <body>
+
         <% include ../templates/navbar %>
-        <%- include('../templates/table', {tableid: "studenttable", visible: "visible", headers: headers, data: matches, button: true, button_text: 'עריכה', radio: false}); %>
+        <%- include('../templates/table', {tableid: "studenttable", visible: "visible", headers: headers, data: matches, button: true, button_text: 'הצג', radio: false}); %>
+        <div id="viewconnectionform" hidden>
+            <%- include ../templates/viewconnection %>
+        </div>
     </body>
 </html>

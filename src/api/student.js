@@ -13,5 +13,5 @@ exports.fetchMatches = async (id) => {
 }
 
 exports.fetchMatchesHeaders = () => {
-    return [['סטודנט', 'name'], ['כיתה', 'class'], ['נושא', 'subject']]
+    return [['סטונדט\\ית', 'name'], ['כיתה', 'class'], ['נושא', 'subject']]
 }

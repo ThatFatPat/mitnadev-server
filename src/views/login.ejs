@@ -32,10 +32,16 @@
                           <label class="form-check-label" for="rememberMe" >זכור אותי</label>
                       </div>
                       <div class="form-text">
-                        <a id="inputError"> <%= errorMessage %> </a>
+                        <% if (errorMessage) { %>
+                        <div class="alert alert-danger" role="alert">
+                        <%= errorMessage %></div> <%}%>
                       </div>
                       <div class="form-text">
-                        <a id="registerSuccess"> <%= successMessage %> </a>
+                      <% if (successMessage) { %>
+                      <div class="alert alert-success" role="alert">
+                        <%= successMessage %>
+                        </div>
+                        <%}%>
                       </div>
                     <a role="button" class="btn btn-secondary" href="/register">הירשם</a>
                     <button type="submit" class="btn btn-primary">התחבר</button>

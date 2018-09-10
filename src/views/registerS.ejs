@@ -65,7 +65,10 @@
                       <input type="password" onchange="validatePassword()" class="form-control" id="vpassword" v-model="vpassword" placeholder="סיסמה" minlength="8" required>
                     </div>
                     <div class="form-group form-check">
-                      <a id="inputError"> <%= errorMessage %> </a>
+                      <% if (errorMessage) { %>
+                      <div class="alert alert-danger" role="alert">
+                      <%= errorMessage %></div>
+                      <%}%>
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="window.history.back()">חזור</button>
                     <button type="submit" class="btn btn-primary">הירשם</button>

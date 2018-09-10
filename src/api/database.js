@@ -147,7 +147,7 @@ exports.fetchMatchesStudent = async function (id) {
     FROM matches
     JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
     JOIN users ON rakazim.id = users.id
-    WHERE matches.student_id = ?`, id)
+    WHERE matches.student_id = ? ORDER BY matches.active DESC`, id)
 }
 
 exports.fetchMatchesTeacher = async function (id) {
@@ -155,17 +155,16 @@ exports.fetchMatchesTeacher = async function (id) {
         return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active active, classes.name class, matches.teacher teacher, matches.desc \`desc\`
         FROM matches
         JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
-        JOIN students ON matches.student_id = students.id
         JOIN users ON students.id = users.id
-        JOIN classes ON students.class = classes.id)`)}
+        JOIN classes ON students.class = classes.id ORDER BY matches.active DESC`)}
     else {
     return queryingAsync(`SELECT matches.id id, users.name name, matches.active active, classes.name class, matches.teacher teacher, matches.desc \`desc\`
     FROM matches
     JOIN rakazim ON rakazim.id = matches.rakazim_id
-    JOIN students ON matches.student_id = students.id
+    JOIN students ON students.id = matches.student_id
     JOIN users ON students.id = users.id
     JOIN classes ON students.class = classes.id
-    WHERE matches.rakazim_id = ?`, id)}
+    WHERE matches.rakazim_id = ? ORDER BY matches.active DESC`, id)}
 }
 
 /*exports.fetchMatchingStudents = async function(id){
@@ -191,6 +190,20 @@ exports.addUser = async function (id, name, password, type) {
 
 exports.addConnection = async function (id, teacher, desc, rakaz) {
     return queryingAsync('INSERT INTO matches (student_id, rakazim_id, `desc`, teacher) VALUES (?, ?, ?, ?)', [id, rakaz, desc, teacher])
+}
+
+exports.editConnection = async function (desc, teacher, id, active) {
+    return queryingAsync('UPDATE matches SET `desc` = ?, teacher = ?, active = ? WHERE ID = ?', [desc, teacher, active, id])
+}
+
+exports.fetchMatch = async (key) => {
+    return queryingAsync(`SELECT matches.id id, matches.student_id student_id, matches.rakazim_id rakazim_id, matches.active active,
+    matches.desc \`desc\`, matches.teacher teacher, users.name name, students.phone phone, students.email email, classes.name class
+    FROM matches
+    JOIN users ON matches.student_id = users.id
+    JOIN students ON matches.student_id = students.id
+    JOIN classes ON classes.id = students.class
+    WHERE matches.id = ?`, key)
 }
 
 process.on('SIGTERM', ()=>{

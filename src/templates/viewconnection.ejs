@@ -1,0 +1,47 @@
+<script>
+    function cancel_onclick(){
+        viewconnectioncancel_onclick()
+    }
+    function save_onclick(){
+        viewconnectionsave_onclick()
+    }
+    function print_value(a){
+        a.value = 1-a.value
+        console.log(a.value)
+    }
+</script>
+<div class="container shadow" style="background:#fdfdfd;border-radius:4px;width:500px;font-size:12;margin-bottom:20px;" dir="rtl">
+    <form action="/editconnection" method="post" style="text-align:right;padding:10px;">
+        <h2>פרטי חיבור</h2>
+        <input type="text" name="key" id="key" hidden>
+        <div class="form-group">
+            <div class="card">
+                <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-user fa-1x"></i> <span id="student_name"></span></h5>
+                <p class="card-text" id="student-info"></p>
+                <a href="#" class="btn btn-primary">למידע התלמיד</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="teacher">מורה</label>
+            <input type="text" class="form-control" id="teacher" name="teacher" placeholder="שם המורה (אם רלוונטי)" maxlength="255"/>
+        </div>
+        <div class="form-group">
+            <label for="desc">תיאור</label>
+            <textarea type="text" class="form-control" id="description" name="desc" placeholder="תיאור קצר על מטרת הקשר (255 תווים)" maxlength="255"></textarea>
+        </div>
+        <div class="form-group">
+                <div>
+                        <label class="switch">
+                            <input type="checkbox" name="active" id="active" onclick="print_value(this)">
+                            <span class="slider"></span>
+                        </label>
+                </div>
+        </div>
+        <div style="text-align:left;">
+            <button type="button" class="btn btn-secondary" onclick="cancel_onclick()">ביטול</button>
+            <button type="submit" class="btn btn-primary" onclick="save_onclick(this)">שמור</button>
+        </div>
+    </form>
+</div>

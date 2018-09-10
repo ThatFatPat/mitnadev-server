@@ -43,17 +43,17 @@
     }
 </script>
 <div class="container">
-  <div style="visibility: <%= visible %>;">
-        <button class="btn mr-auto filter-btn" onclick="toggleFilter()">
+  <div style="visibility: <%= visible %>;" dir="rtl">
+        <button type="button" class="btn mr-auto filter-btn" onclick="toggleFilter()">
             סינון <i class="fas fa-filter"></i>
         </button>
-        <div id="filterform<%= tableid %>" hidden>
-            <label for="textfil<%= tableid %>">הכנס טקסט:</label>
-            <input type="text" id="textfil<%= tableid %>">
+        <div id="filterform<%= tableid %>" class="form-group" style="text-align:left" hidden>
+            <label for="textfil<%= tableid %>"><b>הכנס טקסט:</b></label>
+            <input type="text" class="form-control" id="textfil<%= tableid %>" style="width:20%;display:inline;">
         </div>
   </div>
   <div class="responsive-table" dir="rtl">
-    <table dir="rtl" class="table table-bordered table-condensed" id="<%= tableid %>">
+    <table dir="rtl" class="table table-bordered table-condensed" id="<%= tableid %>" style="text-align:center;">
       <thead>
         <tr>
         <% if (radio) { %>
