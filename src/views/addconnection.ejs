@@ -1,0 +1,31 @@
+<html dir="rtl">
+    <head>
+        <% include ../templates/head %>
+        <link rel="stylesheet" href="/static/table.css">
+        <style>
+            label{
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <% include ../templates/navbar %>
+        
+        <form action="/addconnection" method="post">
+            <h1>הוספת חיבור</h1>
+            <div class="form-group">
+                <%- include('../templates/table', {tableid: "studenttable", visible: "visible", headers: headers, data: students, button: false, button_text: '', radio: true}); %>
+            </div>
+            <div class="form-group">
+              <label for="teacher">מורה</label>
+              <input type="text" class="form-control" id="teacher" name="teacher" placeholder="שם המורה (אם רלוונטי)" maxlength="255"/>
+            </div>
+            <div class="form-group">
+              <label for="desc">תיאור</label>
+              <textarea type="text" class="form-control" id="desc" name="desc" placeholder="תיאור קצר על מטרת הקשר (255 תווים)" maxlength="255"></textarea>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="window.history.back()">חזור</button>
+            <button type="submit" class="btn btn-primary">אישור</button>
+        </form>
+    </body>
+</html>

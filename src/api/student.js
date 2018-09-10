@@ -11,3 +11,7 @@ exports.fetchSubjects = async () => {
 exports.fetchMatches = async (id) => {
     return database.fetchMatchesStudent(id)
 }
+
+exports.fetchMatchesHeaders = () => {
+    return [['סטודנט', 'name'], ['כיתה', 'class'], ['נושא', 'subject']]
+}

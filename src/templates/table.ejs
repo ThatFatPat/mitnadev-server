@@ -38,8 +38,8 @@
             }
         }            
     }
-    function button_wrapper(item){
-        <%= tableid %>button_onclick(item.parentElement.parentElement.getAttribute('key'))
+    function button_wrapper(key){
+        <%= tableid %>button_onclick(key)
     }
 </script>
 <div class="container">
@@ -47,15 +47,18 @@
         <button class="btn mr-auto filter-btn" onclick="toggleFilter()">
             סינון <i class="fas fa-filter"></i>
         </button>
-        <form id="filterform<%= tableid %>" hidden>
+        <div id="filterform<%= tableid %>" hidden>
             <label for="textfil<%= tableid %>">הכנס טקסט:</label>
-            <input type="text" id="textfil<%= tableid %>" name="filtertext<%= tableid %>">
-        </form>
+            <input type="text" id="textfil<%= tableid %>">
+        </div>
   </div>
   <div class="responsive-table" dir="rtl">
     <table dir="rtl" class="table table-bordered table-condensed" id="<%= tableid %>">
       <thead>
         <tr>
+        <% if (radio) { %>
+        <th key="radio<%= tableid %>" width="5%"></th>
+        <%}%>
         <% for (let elem of headers) { %>
           <th key="<%=elem[1]%>" scope="col"><%= elem[0] %></th>
         <%}%>
@@ -66,6 +69,11 @@
       </thead>
       <% for (let data_item of data) { %>
       <tr key="<%=data_item.id%>">
+        <% if (radio) { %>
+        <td>
+        <input type="radio" name="<%= tableid %>radio" key="radio<%= tableid %>" width="5%" value="<%= data_item.id %>" required>
+        </td>
+        <%}%>
         <% for (let elem of headers) { %>
         <td key="<%=elem[1]%>">
          <%= data_item[elem[1]] %>
@@ -73,14 +81,14 @@
         <%}%>
         <% if (button) { %>
         <td key="edit<%= tableid %>">
-         <button class="btn btn-info btn-sm" onclick="button_wrapper(this)"><%= button_text %></button>
+         <button class="btn btn-info btn-sm" onclick="button_wrapper(<%= data_item.id %>)"><%= button_text %></button>
         </td>
         <%}%>
       </tr>
       <%}%>
       <% if (data.length === 0) { %>
             <tr>
-                <td colspan="<%=headers.length%>">אין תוצאות</td>
+                <td colspan="<%=headers.length +1 %>">אין תוצאות</td>
             </tr>
         <%}%>
     </table>

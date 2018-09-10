@@ -58,11 +58,11 @@ passport.deserializeUser((user, done)=>{
 
 /**
  * enable cors
- */
-app.use('*', cors({
-    origin: config.cors,
-    credentials: true
-}))
+//  */
+// app.use('*', cors({
+//     origin: config.cors,
+//     credentials: true
+// }))
 const sendTemplate = (req, res, template, data = {}) => {
     res.render(template, Object.assign({
         user: req.user
@@ -75,7 +75,7 @@ app.get('/', (req, res)=>{
     } else if (req.user.type === 0) {
         student.fetchMatches(req.user.id).then((matches) => {
             sendTemplate(req, res, 'student', {
-                headers: [['סטודנט', 'name'], ['כיתה', 'class'], ['נושא', 'subject']],
+                headers: student.fetchMatchesHeaders(),
                 matches
              })
         }).catch(err=>{
@@ -84,7 +84,7 @@ app.get('/', (req, res)=>{
     } else if (req.user.type === 1) {
         teacher.fetchMatches(req.user.id).then((matches) => {
             sendTemplate(req, res, 'teacher', {
-                headers: [['סטודנט', 'name'], ['כיתה', 'class']],
+                headers: teacher.fetchMatchesHeaders(),
                 matches
              })
         }).catch(err=>{
@@ -191,7 +191,7 @@ app.get('/subjects', (req, res) => {
  */
 app.post('/adduser', (req, res) => {
     if (req.body.secret !== 'sea292weFM1') {
-        res.sendStatus(403)
+        sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
     } else {
         auth.addUser(req.body.id, req.body.name, req.body.password, req.body.type).then(()=>{
             res.sendStatus(200)
@@ -203,9 +203,6 @@ app.post('/adduser', (req, res) => {
 
 app.use('/static', express.static(path.join(__dirname, 'static'))) 
 app.use('/assets', express.static(path.join(__dirname, 'assets')))
-app.get('*', (req, res)=>{ // 404 back to the website
-    sendTemplate(req, res, 'error', {errorno: 404, error: 'Page Not Found'})
-})
 
 /**
  * Middleware to exclude the non-authorised api calls to authorised api calls 
@@ -214,7 +211,7 @@ app.use((req, res, next) => {
     if (req.user) {
         const allType = ['/removeFirst', '/user']
         const adminType = ['/addclass', '/studentdata', '/headers', '/removeclass']
-        const teacherType = ['/headers', '/studentdata']
+        const teacherType = ['/headers', '/studentdata', '/addconnection']
         const studentType = ['/matches']
         const user = req.user
         if (allType.includes(req.path)) {
@@ -226,23 +223,13 @@ app.use((req, res, next) => {
         } else if (adminType.includes(req.path) && user.type === 2) {
             next()
         } else {
-            return res.sendStatus(403)
+            res.status(403)
+            return sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
         }
     } else {
-        return res.sendStatus(403)
+        res.status(403)
+        return sendTemplate(req, res, 'error', {errorno: 403, error: 'Forbidden'})
     }
-})
-
-app.get('/studentdata', (req, res) =>  {
-    let id = req.user.id
-    if (req.user.type === 2) {
-        id = null
-    }
-    teacher.fetchData(id).then((data)=>{
-        res.json({data})
-    }).catch(()=>{
-        res.sendStatus(500)
-    })
 })
 
 /**
@@ -263,5 +250,45 @@ app.post('/removeclass', (req, res) => {
     }).catch((error)=>{
         res.status(400).json(error) // invalid id
     })
+})
+
+
+//===============TEMP================
+
+app.get('/addconnection', (req, res) => {
+    teacher.fetchStudents(req.user.id).then((students) => {
+        sendTemplate(req, res, 'addconnection', {
+            headers: teacher.fetchMatchesHeaders(),
+            students
+        })
+    }).catch((err)=>{
+        sendTemplate(req, res, 'error', {errorno: 500, error: err})
+    })
+})
+
+app.post('/addconnection', (req, res) => {
+    console.log(req.body)
+    const student = req.body.studenttableradio
+    const teacher_name = req.body.teacher
+    const desc = req.body.desc
+    const rakaz = req.user.id
+    if (desc && desc.length > 255) {
+        return sendTemplate(req, res, 'error', {errorno: 400, error: 'תיאור ארוך מדי'})
+    } else if (teacher_name && teacher_name > 255) {
+        return sendTemplate(req, res, 'error', {errorno: 400, error: 'שם מורה ארוך מדי'})
+    } else {
+        teacher.addConnection(student, teacher_name, desc, rakaz).then(()=>{
+            return res.redirect('/')
+        }).catch((err)=>{
+            return sendTemplate(req, res, 'error', {errorno: 500, error: err})
+        })
+    }
+})
+
+//=================================
+
+
+app.get('*', (req, res)=>{ // 404 back to the website
+    sendTemplate(req, res, 'error', {errorno: 404, error: 'Page Not Found'})
 })
 app.listen(config.port)

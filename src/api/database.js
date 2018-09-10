@@ -152,14 +152,14 @@ exports.fetchMatchesStudent = async function (id) {
 
 exports.fetchMatchesTeacher = async function (id) {
     if (id==null){ // For Admin
-        return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active active, classes.name class
+        return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active active, classes.name class, matches.teacher teacher, matches.desc \`desc\`
         FROM matches
         JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
         JOIN students ON matches.student_id = students.id
         JOIN users ON students.id = users.id
         JOIN classes ON students.class = classes.id)`)}
     else {
-    return queryingAsync(`SELECT matches.id id, users.name name, matches.active active, classes.name class
+    return queryingAsync(`SELECT matches.id id, users.name name, matches.active active, classes.name class, matches.teacher teacher, matches.desc \`desc\`
     FROM matches
     JOIN rakazim ON rakazim.id = matches.rakazim_id
     JOIN students ON matches.student_id = students.id
@@ -189,8 +189,8 @@ exports.addUser = async function (id, name, password, type) {
     return queryingAsync('INSERT INTO users (id, name, pass, type, firstLogin) VALUES (?, ?, ?, ?, 0)', [id, name, password, type])
 }
 
-exports.addMatch = async function (s_id, r_id, active) {
-    return queryingAsync('INSERT INTO matches (')
+exports.addConnection = async function (id, teacher, desc, rakaz) {
+    return queryingAsync('INSERT INTO matches (student_id, rakazim_id, `desc`, teacher) VALUES (?, ?, ?, ?)', [id, rakaz, desc, teacher])
 }
 
 process.on('SIGTERM', ()=>{

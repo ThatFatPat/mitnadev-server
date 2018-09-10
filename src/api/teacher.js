@@ -9,3 +9,11 @@ exports.fetchStudents = async (id) => {
 exports.fetchMatches = async (id) => {
     return database.fetchMatchesTeacher(id)
 }
+
+exports.fetchMatchesHeaders = () => {
+    return [['סטודנט', 'name'], ['כיתה', 'class'], ['מורה אחראית', 'teacher'], ['תיאור', 'desc']]
+}
+
+exports.addConnection = (student, teacher, desc, rakaz) => {
+    return database.addConnection(student, teacher, desc, rakaz)
+}
