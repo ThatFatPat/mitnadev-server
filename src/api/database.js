@@ -111,7 +111,7 @@ exports.fetchClasses = async function () {
 }
 
 exports.fetchSubjects = async function () {
-    return queryingAsync(`SELECT subj_id id, subjectname subject FROM rakazim`)
+    return queryingAsync(`SELECT subj_id id, subjectname name FROM rakazim`)
 }
 
 exports.fetchMatchesStudent = async function (id) {
@@ -172,6 +172,18 @@ exports.fetchMatch = async (key) => {
     JOIN students ON matches.student_id = students.id
     JOIN classes ON classes.id = students.class
     WHERE matches.id = ?`, key)
+}
+
+exports.fetchStudentData = async (id) => {
+    console.log(id)
+    return queryingAsync(`SELECT users.id id, users.name name, students.phone phone, students.email email, classes.name class, rakazim.subjectname subject, rakazim.subj_id sid, rakaz.name rname
+    FROM users
+    JOIN students ON students.id = users.id 
+    JOIN classes ON students.class = classes.id 
+    JOIN students_subjects ON students_subjects.student_id = users.id 
+    JOIN rakazim ON students_subjects.subject_id = rakazim.subj_id
+    JOIN users rakaz ON rakaz.id = rakazim.id 
+    WHERE users.id = ?`, id)
 }
 
 process.on('SIGTERM', ()=>{

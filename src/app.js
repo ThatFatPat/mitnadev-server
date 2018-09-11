@@ -153,10 +153,14 @@ app.get('/register', (req, res) =>{
 })
 
 app.get('/registerS', (req, res)=>{
-    student.fetchClasses().then((classes)=>{
-        const errorMessage = req.session.errorMessage ? req.session.errorMessage : ''
-        req.session.errorMessage = ''
-        sendTemplate(req, res, 'registerS', {classes, errorMessage})
+    let classes
+    let errorMessage = req.session.errorMessage ? req.session.errorMessage : ''
+    req.session.errorMessage = ''
+    student.fetchClasses().then((cs)=>{
+        classes = cs
+        return student.fetchSubjects()
+    }).then((subjects)=>{
+        sendTemplate(req, res, 'registerS', {classes, errorMessage, subjects})
     }).catch(()=>{
         sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
     })
@@ -175,6 +179,25 @@ app.post('/register', (req, res) => {
         req.session.errorMessage = 'אנא ודאו כי הפרטים שהזנתם תקינים ונסו שנית'
         res.redirect('/registerS')
     })
+})
+
+app.get('/settings', (req, res)=>{
+    if (req.user) {
+        switch (req.user.type) {
+            case 0:
+                student.fetchData(req.user.id).then((data)=>{
+                    sendTemplate(req, res, 'settings', {data})
+                })
+                break;
+            case 1:
+                teacher.fetchData(req.user.id).then((data)=>{
+                    sendTemplate(req, res, 'settings', {data})
+                })
+
+        }
+    } else {
+        sendTemplate(req, res, 'error', {errorno: 401, error: 'Unauthorized'})
+    }
 })
 
 app.get('/classes', (req, res) => {

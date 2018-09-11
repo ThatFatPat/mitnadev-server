@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../templates/head %>
+</head>
+<body>
+    <% include ../templates/navbar %>
+    <div class="container-fluid">
+        <div class="row justify-content-center ">
+            <div class="d-flex col-md-4 container-backdrop" dir="rtl">
+                <form action="/updatedata" method="post" style="text-align:right;padding:10px;">
+                    <h2>הגדרות</h2>
+                    <input type="text" name="key" id="key" hidden>
+                    <div class="form-group">
+                        <label for="id">ת.ז:</label>
+                        <input class="form-control" type="text" id="id" value="<%= data[0].id %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">שם:</label>
+                        <input class="form-control" type="text" id="name" value="<%= data[0].name %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">טלפון:</label>
+                        <input class="form-control" type="text" name="phone" id="phone" value="<%= data[0].phone %>" >
+                    </div>
+                    <div class="form-group">
+                        <label for="email">אימייל:</label>
+                        <input class="form-control" type="email" name="email" id="email" value="<%= data[0].email %>" >
+                    </div>
+                    <div style="text-align:left;">
+                        <button type="button" class="btn btn-secondary">ביטול</button>
+                        <button type="submit" class="btn btn-primary">שמור</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -15,3 +15,7 @@ exports.fetchMatches = async (id) => {
 exports.fetchMatchesHeaders = () => {
     return [['סטונדט\\ית', 'name'], ['כיתה', 'class'], ['נושא', 'subject']]
 }
+
+exports.fetchData = async (id) => {
+    return database.fetchStudentData(id)
+}
