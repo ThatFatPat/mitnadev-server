@@ -136,14 +136,13 @@ app.get('/logout', (req, res) => {
 
 app.post('/registerteacher', (req, res) => {
     if (req.body.secret !== 'iO2fSA78fS') {
-        res.sendStatus(401)
+        sendTemplate(req, res, 'error', {errorno: 401, error: 'קוד לא תקין'})
         return
     }
     auth.registerTeacher(req.body.id, req.body.name, req.body.password, req.body.subject).then(()=>{
         req.flash('success', 'הרשמה נקלטה בהצלחה')
         res.redirect('/login')
-    }).catch((e)=>{
-        console.error(e)
+    }).catch(()=>{
         req.session.errorMessage = 'אנא ודאו כי הפרטים שהזנתם תקינים ונסו שנית'
         res.redirect('/registerS')
     })
@@ -172,8 +171,7 @@ app.post('/register', (req, res) => {
     auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.cl).then(()=>{
         req.flash('success', 'הרשמה נקלטה בהצלחה')
         res.redirect('/login')
-    }).catch((e)=>{
-        console.error(e)
+    }).catch(()=>{
         req.session.errorMessage = 'אנא ודאו כי הפרטים שהזנתם תקינים ונסו שנית'
         res.redirect('/registerS')
     })

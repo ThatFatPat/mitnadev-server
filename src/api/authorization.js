@@ -79,10 +79,6 @@ exports.getUserInfo = async function (id) {
     return database.getUserInfo(id)
 }
 
-exports.removeFirst = async function (id) {
-    return database.removeFirst(id)
-}
-
 exports.addUser = async (id, name, password, type) => {
     return database.addUser(id, name, await hashPass(password), type)
 }

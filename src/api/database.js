@@ -41,20 +41,8 @@ async function queryingAsync(query, values) {
  * @param {string} subjectname the name of the subject
  */
 exports.registerTeacher = async function (id, name, pass, subjectname) {
-    return new Promise ((resolve, reject) => {
-        connection.beginTransaction((err)=>{
-            if (err) reject(err);
-
-            connection.query('CALL registerTeacher(?, ?, ?, ?);', [id, name, pass, subjectname], function (error) {
-                if (error) {
-                    return connection.rollback(()=>{
-                        reject(error)
-                    })
-                } else {resolve()}
-            })
-        })
-    }
-)}
+    return queryingAsync('CALL registerTeacher(?, ?, ?, ?);', [id, name, pass, subjectname])
+}
 
 /**
  * this will register a student
@@ -66,20 +54,8 @@ exports.registerTeacher = async function (id, name, pass, subjectname) {
  * @param {number} cl 
  */
 exports.registerStudent = async function (id, name, pass, phone, email, cl) {
-    return new Promise ((resolve, reject) => {
-        connection.beginTransaction((err)=>{
-            if (err) reject(err);
-
-            connection.query('CALL registerStudent(?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ], function (error) {
-                if (error) {
-                    return connection.rollback(()=>{
-                        reject(error)
-                    })
-                } else {resolve()}
-            })
-        })
-    }
-)}
+    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ])
+}
 
 /**
  * get the hashed password of a user
@@ -104,10 +80,6 @@ exports.getUserInfo = async function (id) {
  */
 exports.getStudentInfo = async function (id) {
     return (await queryingAsync('SELECT * FROM students WHERE ?', {id}))[0]
-}
-
-exports.removeFirst = async function (id) {
-    await queryingAsync('UPDATE users SET firstLogin = 0 WHERE ?', {id})
 }
 
 /**
@@ -173,27 +145,23 @@ exports.fetchMatchesTeacher = async function (id) {
 }*/
 
 exports.addClass = async function (name) {
-    return queryingAsync('INSERT INTO classes (name) VALUES (?)', name)
+    return queryingAsync('CALL addClass(?);', name)
 }
 
 exports.removeClass = async function (id) {
-    return queryingAsync('DELETE FROM classes WHERE id = ?', id)
-}
-
-exports.addSubject = async function (name) {
-    return queryingAsync('INSERT INTO subjects (name) VALUES (?)', name)
+    return queryingAsync('CALL removeClass(?)', id)
 }
 
 exports.addUser = async function (id, name, password, type) {
-    return queryingAsync('INSERT INTO users (id, name, pass, type, firstLogin) VALUES (?, ?, ?, ?, 0)', [id, name, password, type])
+    return queryingAsync('CALL addUser(?, ?, ?, ?)', [id, name, password, type])
 }
 
 exports.addConnection = async function (id, teacher, desc, rakaz) {
-    return queryingAsync('INSERT INTO matches (student_id, rakazim_id, `desc`, teacher) VALUES (?, ?, ?, ?)', [id, rakaz, desc, teacher])
+    return queryingAsync('CALL addConnection(?, ?, ?, ?)', [id, rakaz, desc, teacher])
 }
 
 exports.editConnection = async function (desc, teacher, id, active) {
-    return queryingAsync('UPDATE matches SET `desc` = ?, teacher = ?, active = ? WHERE ID = ?', [desc, teacher, active, id])
+    return queryingAsync('CALL editConnection(?, ?, ?, ?)', [desc, teacher, active, id])
 }
 
 exports.fetchMatch = async (key) => {
