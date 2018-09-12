@@ -53,8 +53,12 @@ exports.registerTeacher = async function (id, name, pass, subjectname) {
  * @param {string} email 
  * @param {number} cl 
  */
-exports.registerStudent = async function (id, name, pass, phone, email, cl) {
-    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl ])
+exports.registerStudent = async function (id, name, pass, phone, email, cl, subjectid) {
+    return queryingAsync('CALL registerStudent(?, ?, ?, ?, ?, ?, ?)', [ id, name, pass, phone, email, cl, subjectid])
+}
+
+exports.addSubject = async (id, subject) => {
+    return queryingAsync('CALL addSubject(?, ?)', [id, subject])
 }
 
 /**

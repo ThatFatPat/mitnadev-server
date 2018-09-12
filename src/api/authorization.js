@@ -27,6 +27,8 @@ function validDetails(data) {
         return false
     } else if (data.cl && !clregex.test(data.cl)) { // cl is an integer
         return false
+    } else if (data.subjectid && !clregex.test(data.subjectid)) {
+        return false
     } else {
         return true
     }
@@ -67,12 +69,18 @@ exports.registerTeacher = async function (id, name, password, subjectname) {
     return database.registerTeacher(id, name, hashedpass, subjectname)
 }
 
-exports.registerStudent = async function (id, name, password, phone, email, cl /* class, can't type that obviously */) {
-    if (!validDetails({id, password, name, phone, email, cl})) {
+exports.registerStudent = async function (id, name, password, phone, email, cl /* class, can't type that obviously */, subjectid1, subjectid2, subjectid3) {
+    if (!validDetails({id, password, name, phone, email, cl, subjectid: subjectid1}) || subjectid1 === subjectid2 || subjectid2 === subjectid3 || subjectid1 === subjectid3) {
         throw 'invalid details'
     }
     const hashedpass = await hashPass(password)
-    return database.registerStudent(id, name, hashedpass, phone, email, cl)
+    await database.registerStudent(id, name, hashedpass, phone, email, cl, subjectid1)
+    if (subjectid2 && validDetails({subjectid: subjectid2})) {
+        await database.addSubject(id, subjectid2)
+    }
+    if (subjectid3 && validDetails({subjectid: subjectid3})) {
+        await database.addSubject(id, subjectid2)
+    }
 }
 
 exports.getUserInfo = async function (id) {
