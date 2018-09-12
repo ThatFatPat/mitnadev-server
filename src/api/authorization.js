@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt-nodejs') // one of the best password hashers, it auto generates salts to prevent rainbow tables.
+const bcrypt = require('bcrypt') // one of the best password hashers, it auto generates salts to prevent rainbow tables.
 const database = require('./database')
 const LocalStrategy = require('passport-local').Strategy
 const XRegExp = require('xregexp')
@@ -33,15 +33,7 @@ function validDetails(data) {
 }
 
 async function hashPass(password) {
-    ret = null
-    bcrypt.genSalt(10, function(salt) {
-        bcrypt.hash(password, salt, null, function(err, hashedPassword) {
-            if(!err){
-                ret = hashedPassword
-            }
-        });
-    });
-    return ret
+    return bcrypt.hash(password, 10)
 }
 
 exports.strategy = new LocalStrategy({usernameField: 'id', passwordField: 'password'}, (id, password, done)=>{
