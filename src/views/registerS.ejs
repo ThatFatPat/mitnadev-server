@@ -61,6 +61,9 @@
                       <label><small><i>אנא בחרו עד 3 נושאים בהם תרצו להתנדב</i></small></label><br>
                       <label for="subject1">נושא ראשון</label>
                       <select class="form-control" name="subj_id1" id="subject1" required>
+                        <option key="none_1" value="">
+                          -------
+                        </option>
                         <% for (let option of subjects) { %>
                         <option key="<%=option.id%>_1" value="<%=option.id%>">
                           <%= option.name %>

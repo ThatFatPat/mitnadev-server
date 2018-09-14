@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt') // one of the best password hashers, it auto generates salts to prevent rainbow tables.
+const bcrypt = require('bcryptjs') // one of the best password hashers, it auto generates salts to prevent rainbow tables.
 const database = require('./database')
 const LocalStrategy = require('passport-local').Strategy
 const XRegExp = require('xregexp')
@@ -70,7 +70,7 @@ exports.registerTeacher = async function (id, name, password, subjectname) {
 }
 
 exports.registerStudent = async function (id, name, password, phone, email, cl /* class, can't type that obviously */, subjectid1, subjectid2, subjectid3) {
-    if (!validDetails({id, password, name, phone, email, cl, subjectid: subjectid1}) || subjectid1 === subjectid2 || subjectid2 === subjectid3 || subjectid1 === subjectid3) {
+    if (!validDetails({id, password, name, phone, email, cl, subjectid: subjectid1}) || subjectid1 === subjectid2 || (subjectid2 === subjectid3 && subjectid2 !== "") || subjectid1 === subjectid3) {
         throw 'invalid details'
     }
     const hashedpass = await hashPass(password)
