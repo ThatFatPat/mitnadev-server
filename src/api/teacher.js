@@ -26,7 +26,6 @@ exports.editConnection = async (desc, teacher, key, active) => {
 
 exports.fetchMatch = async (key, id) => {
     const match = (await database.fetchMatch(key))[0]
-    console.log(match)
     if (!id){
         return match
     }

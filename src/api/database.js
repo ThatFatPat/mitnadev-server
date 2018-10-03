@@ -179,7 +179,6 @@ exports.fetchMatch = async (key) => {
 }
 
 exports.fetchStudentData = async (id) => {
-    console.log(id)
     return queryingAsync(`SELECT users.id id, users.name name, students.phone phone, students.email email, classes.name class, rakazim.subjectname subject, rakazim.subj_id sid, rakaz.name rname
     FROM users
     JOIN students ON students.id = users.id 
