@@ -83,12 +83,15 @@ app.get('/', (req, res)=>{
             sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
         })
     } else if (req.user.type === 1) {
-        teacher.fetchMatches(req.user.id).then((matches) => {
+        Promise.all([teacher.fetchMatches(req.user.id), teacher.fetchStudents(req.user.id)]).then(([matches, students]) => {
             sendTemplate(req, res, 'teacher', {
                 headers: teacher.fetchMatchesHeaders(),
-                matches
+                matches,
+                sheaders: teacher.fetchStudentsHeaders(),
+                students
              })
         }).catch(err=>{
+            console.error(err)
             sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
         })
     }
@@ -287,22 +290,8 @@ app.post('/removeclass', (req, res) => {
     })
 })
 
-
-//===============TEMP================
-
-app.get('/addconnection', (req, res) => {
-    teacher.fetchStudents(req.user.id).then((students) => {
-        sendTemplate(req, res, 'addconnection', {
-            headers: teacher.fetchStudentsHeaders(),
-            students
-        })
-    }).catch((err)=>{
-        sendTemplate(req, res, 'error', {errorno: 500, error: err})
-    })
-})
-
 app.post('/addconnection', (req, res) => {
-    const student = req.body.studenttableradio
+    const student = req.body.studentpicktableradio
     const teacher_name = req.body.teacher
     const desc = req.body.desc
     const rakaz = req.user.id
@@ -351,8 +340,6 @@ app.post('/matchdata', (req, res)=>{
         }
     })
 })
-
-//=================================
 
 
 app.get('*', (req, res)=>{ // 404 back to the website
