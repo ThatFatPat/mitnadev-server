@@ -93,7 +93,11 @@ app.get('/', (req, res)=>{
         })
     }
     else if (req.user.type === 2) {
-        sendTemplate(req, res, 'admin')
+        student.fetchClasses().then((classes)=>{
+            sendTemplate(req, res, 'admin', {
+                classes
+            })
+        })
     }
 })
 
@@ -269,7 +273,7 @@ app.use((req, res, next) => {
 
 app.post('/addclass', (req, res) => {
     admin.addClass(req.body.name).then(()=>{
-        res.sendStatus(200)
+        res.redirect('/')
     }).catch((error)=>{
         res.status(400).json(error) // invalid name
     })
@@ -277,7 +281,7 @@ app.post('/addclass', (req, res) => {
 
 app.post('/removeclass', (req, res) => {
     admin.removeClass(req.body.id).then(()=>{
-        res.sendStatus(200)
+        res.redirect('/')
     }).catch((error)=>{
         res.status(400).json(error) // invalid id
     })

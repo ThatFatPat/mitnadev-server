@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html dir="rtl">
+    <head>
+    <% include ../templates/head %>
+    <link rel="stylesheet" type="text/css" href="/static/admin.css">
+    <link rel="stylesheet" href="/static/table.css">
+    <script>
+        function classestablebutton_onclick(id) {
+            $.post('/removeclass', {id})
+            location.reload()
+        }
+    </script>
+    </head>
+    <body>
+    <div id="admin">
+      <div class="modal fade" id="classestableModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <form action="/addclass" method="post">
+            <div class="modal-header text-center">
+              <h4 class="modal-title w-100 font-weight-bold">הוסף כיתה</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body mx-3">
+              <div class="md-form mb-5 heb">
+                <label for="classname">שם הכיתה</label>
+                <input type="text" id="classname" class="form-control" name="name" minlength="2" maxlength="45" required>
+              </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+              <button type="submit" class="btn btn-default">הוסף</button>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>        
+      <% include ../templates/navbar %>
+      <div id="classesTable" class="divider container">
+      <%- include('../templates/table', {tableid: "classestable", visible: "visible", headers: [["כיתה", "name"]], data: classes, button: true, button_text:'<i class="fas fa-times"></i>', radio: false, add: true}); %>
+      
+        </div>
+    </div>
+    </body>
+</html>
