@@ -18,17 +18,20 @@ exports.fetchMatchesHeaders = () => {
 
 exports.fetchData = async (id) => {
     const data = await database.fetchStudentData(id)
-    console.log(data)
     if (data === []) {
         return []
     }
     const parsed = {name: data[0].name, class: data[0].class, id: data[0].id, email: data[0].email, phone: data[0].phone, subjects: []}
     for (let row of data) {
-        parsed.subjects.push({subject: row.subject, rname: row.rname})
+        parsed.subjects.push({subject: row.subject, rname: row.rname, id: row.sid})
     }
     return parsed
 }
 
 exports.addSubject = async (id, subject) => {
     return database.addSubject(id, subject)
+}
+
+exports.removeSubject = async (id, subject) => {
+    return database.removeSubject(id, subject)
 }

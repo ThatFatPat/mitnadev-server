@@ -326,17 +326,19 @@ app.post('/matchdata', (req, res)=>{
 
 app.get('/settings', (req, res)=>{
     const errorMessage = req.session.error ? req.session.error : null
-    const successMessage = req.session.error ? null : 'פרטים עודכנו בהצלחה'
+    const successMessage = req.session.error || !req.session.v ? null : 'פרטים עודכנו בהצלחה'
     req.session.error = null
+    req.session.v = null
     switch (req.user.type) {
         case 0:
             Promise.all([student.fetchData(req.user.id), student.fetchSubjects()]).then(([data, subjects])=>{
-                sendTemplate(req, res, 'settings', {data, subjects})
+                subjects = subjects.filter(x=>!data.subjects.some(y=>y.id === x.id))
+                sendTemplate(req, res, 'settings', {data, subjects, errorMessage, successMessage})
             })
             break;
         case 1:
             teacher.fetchData(req.user.id).then((data)=>{
-                sendTemplate(req, res, 'settings', {data})
+                sendTemplate(req, res, 'settings', {data, errorMessage, successMessage})
             })
 
     }
@@ -347,7 +349,28 @@ app.post('/addsubject', (req, res) => {
     if (isNaN(subject)) {
         sendTemplate(req, res, 'error', {errorno: '400', error: 'Subject is not a number'})
     }
-    student.addSubject(req.user.id, subject)
+    student.addSubject(req.user.id, subject).then(()=>{
+        req.session.v = true
+        res.redirect('/settings')
+    }).catch(()=>{
+        req.session.errorMessage = "הנושא כבר נבחר בעבר!"
+        res.redirect('/settings')
+    })
+})
+
+app.post('/removesubject', (req, res) => {
+    const subject = req.body.subj
+    if (isNaN(subject)) {
+        sendTemplate(req, res, 'error', {errorno: '400', error: 'Subject is not a number'})
+        return
+    }
+    student.removeSubject(req.user.id, subject).then(()=>{
+        req.session.v = true
+        res.redirect('/settings')
+    }).catch(()=>{
+        req.session.errorMessage = "התרחשה תקלה"
+        res.redirect('/settings')
+    })
 })
 
 

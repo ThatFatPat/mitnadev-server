@@ -4,6 +4,12 @@
     <% include ../templates/head %>
     <link rel="stylesheet" type="text/css" href="/static/settings.css">
     <link rel="stylesheet" type="text/css" href="/static/table.css">
+    <script>
+        function subjectstablebutton_onclick(id) {
+            $.post('/removesubject', {subj: id})
+            location.reload()
+        }
+    </script>
 </head>
 <body>
     <div class="modal fade" id="subjectstableModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -74,7 +80,8 @@
                         <label for="email">אימייל:</label>
                         <input class="form-control" type="email" name="email" id="email" value="<%= data.email %>" >
                     </div>
-                    <%= JSON.stringify(data) %>
+                    <%= JSON.stringify(data.subjects) %>
+                    <%= JSON.stringify(subjects) %>
                     <div style="text-align:left;">
                         <button type="button" class="btn btn-secondary">ביטול</button>
                         <button type="submit" class="btn btn-primary">שמור</button>
@@ -84,7 +91,7 @@
         </div>
         <div class="row spacer justify-content-center">
             <div class="col-lg-6 col-md-4">
-                <%- include('../templates/table', {tableid: "subjectstable", visible: "visible", headers: [["נושא", "subject"], ["רכז", "rname"]], data: data.subjects, button: true, button_text:'הצג', radio: false, add: true}); %>
+                <%- include('../templates/table', {tableid: "subjectstable", visible: "visible", headers: [["נושא", "subject"], ["רכז", "rname"]], data: data.subjects, button: true, button_text:'<i class="fas fa-times"></i>', radio: false, add: true}); %>
             </div>
         </div>
     </div>
