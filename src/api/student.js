@@ -1,4 +1,36 @@
 const database = require('./database')
+const XRegExp = require('xregexp')
+
+
+const idregex = /^[0-9]{9}$/
+const passregex = /^.{8,}$/
+const nameregex = XRegExp.build('^(\\pL|\\s){4,45}$')
+const subjectregex = /^.{2,45}$/
+const phoneregex = /^[0-9+-]{7,45}$/
+const emailregex = XRegExp.build('^[\\p{L}\\p{N}]+@\\p{L}+[.]\\p{L}+$') // https://stackoverflow.com/questions/19461943/how-to-validate-a-unicode-email
+const clregex = /^[0-9]+$/
+
+function validDetails(data) {
+    if (data.id && !idregex.test(data.id)) {
+        return false
+    } else if (data.password && !passregex.test(data.password)) {
+        return false
+    } else if (data.name && !nameregex.test(data.name)) {
+        return false
+    } else if (data.subject && !subjectregex.test(data.subject)) {
+        return false
+    } else if (data.phone && !phoneregex.test(data.phone)) {
+        return false
+    } else if (data.email && !emailregex.test(data.email)) { 
+        return false
+    } else if (data.cl && !clregex.test(data.cl)) { // cl is an integer
+        return false
+    } else if (data.subjectid && !clregex.test(data.subjectid)) {
+        return false
+    } else {
+        return true
+    }
+}
 
 exports.fetchClasses = async () => {
     return database.fetchClasses()
@@ -34,4 +66,12 @@ exports.addSubject = async (id, subject) => {
 
 exports.removeSubject = async (id, subject) => {
     return database.removeSubject(id, subject)
+}
+
+exports.updateData = async (email, phone, id) => {
+    if (!validDetails({email, phone})) {
+        throw 'invalid details'
+    }
+
+    return database.updateData(id, email, phone)
 }

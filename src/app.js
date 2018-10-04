@@ -232,7 +232,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')))
 app.use((req, res, next) => {
     const adminType = ['/addclass', '/removeclass']
     const teacherType = ['/addconnection', '/matchdata', '/editconnetion']
-    const studentType = ['/addsubject', '/updatedata']
+    const studentType = ['/addsubject', '/removesubject', '/updatedata']
     const need_auth = adminType.concat(teacherType)
     if (req.user) {
         const user = req.user
@@ -373,6 +373,26 @@ app.post('/removesubject', (req, res) => {
         req.session.errorMessage = "התרחשה תקלה"
         res.redirect('/settings')
     })
+})
+
+app.post('/updatedata', (req, res)=>{
+    const email = req.body.email
+    const phone = req.body.phone
+
+    if (!email || !phone) {
+        req.session.error = "אימייל וטלפון זה חובה!"
+        res.redirect('/settings')
+        return
+    }
+
+    student.updateData(email, phone, req.user.id).then(()=>{
+        req.session.v = true
+        res.redirect('/settings')
+    }).catch(()=>{
+        req.session.error = "אימייל או טלפון לא תקינים"
+        res.redirect('/settings')
+    })
+
 })
 
 

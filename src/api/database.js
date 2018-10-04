@@ -65,6 +65,10 @@ exports.removeSubject = async (id, subject) => {
     return queryingAsync('CALL removeSubject(?, ?)', [id, subject])
 }
 
+exports.updateData = async (id, email, phone) => {
+    return queryingAsync('CALL updateData(?, ?, ?)', [email, phone, id])
+}
+
 /**
  * get the hashed password of a user
  * @param {string} id 
