@@ -96,9 +96,11 @@ app.get('/', (req, res)=>{
         })
     }
     else if (req.user.type === 2) {
-        student.fetchClasses().then((classes)=>{
+        Promise.all([student.fetchClasses(), admin.fetchMatches()]).then(([classes, matches])=>{
             sendTemplate(req, res, 'admin', {
-                classes
+                classes,
+                matches,
+                headers: admin.fetchMatchesHeaders()
             })
         })
     }

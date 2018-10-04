@@ -135,6 +135,7 @@ exports.fetchMatchesTeacher = async function (id) {
         return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active active, classes.name class, matches.teacher teacher, matches.desc \`desc\`
         FROM matches
         JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
+        JOIN students ON students.id = matches.student_id
         JOIN users ON students.id = users.id
         JOIN classes ON students.class = classes.id ORDER BY matches.active DESC`)}
     else {
