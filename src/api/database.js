@@ -70,7 +70,7 @@ exports.removeSubject = async (id, subject) => {
  * @param {string} id 
  */
 exports.getHashedPass = async function (id) {
-    return (await queryingAsync('SELECT * FROM users WHERE ?', {id}))[0].pass
+    return queryingAsync('SELECT * FROM users WHERE ?', {id})
 }
 
 /**

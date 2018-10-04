@@ -42,7 +42,11 @@ exports.strategy = new LocalStrategy({usernameField: 'id', passwordField: 'passw
     if (!validDetails({id, password})) {
         return done(null, false)
     }
-    database.getHashedPass(id).then((hashedpass)=>{
+    database.getHashedPass(id).then((rows)=>{
+        if (rows.isEmpty()) {
+            return done(null, false)
+        }
+        const hashedpass = rows[0].pass
         bcrypt.compare(password, hashedpass).then((match)=>{
             if (match) {
                 database.getUserInfo(id).then(user=>{
