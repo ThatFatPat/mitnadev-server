@@ -189,6 +189,10 @@ exports.fetchStudentData = async (id) => {
     WHERE users.id = ?`, id)
 }
 
+exports.fetchTeacherData = async (id) => {
+    return queryingAsync(`SELECT users.id id, users.name name WHERE users.id = ?`, id)
+}
+
 process.on('SIGTERM', ()=>{
     connection.end()
 })

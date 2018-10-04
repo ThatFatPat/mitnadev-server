@@ -1,37 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl">
 <head>
     <% include ../templates/head %>
+    <link rel="stylesheet" type="text/css" href="/static/settings.css">
+    <link rel="stylesheet" type="text/css" href="/static/table.css">
 </head>
 <body>
+    <div class="modal fade" id="subjectstableModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <form action="/addsubject" method="post">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">הוסף נושא</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <div class="md-form mb-5 heb">
+                <label for="subject">נושא</label>
+                      <select class="form-control heb" name="subj" id="subject" required>
+                        <% for (let option of subjects) { %>
+                        <option key="<%=option.id%>" value="<%=option.id%>">
+                          <%= option.name %>
+                        </option>
+                        <%}%>
+                      </select>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-default">הוסף</button>
+            </div>
+            </form>
+            </div>
+        </div>
+    </div>        
     <% include ../templates/navbar %>
     <div class="container-fluid">
-        <div class="row justify-content-center ">
-            <div class="d-flex col-md-4 container-backdrop" dir="rtl">
+        <div class="row spacer justify-content-center">
+            <div class="col-lg-6 col-md-4 container-backdrop justify-content-center" dir="rtl">
+                <h2 class="header">הגדרות</h2>
                 <form action="/updatedata" method="post" style="text-align:right;padding:10px;">
-                    <h2>הגדרות</h2>
+                    <div class="form-text">
+                        <% if (errorMessage) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= errorMessage %>
+                            </div> 
+                        <%}%>
+                        <% if (successMessage) { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= successMessage %>
+                            </div>
+                        <%}%>
+                    </div>
                     <input type="text" name="key" id="key" hidden>
                     <div class="form-group">
                         <label for="id">ת.ז:</label>
-                        <input class="form-control" type="text" id="id" value="<%= data[0].id %>" readonly>
+                        <input class="form-control" type="text" id="id" value="<%= data.id %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="name">שם:</label>
-                        <input class="form-control" type="text" id="name" value="<%= data[0].name %>" readonly>
+                        <input class="form-control" type="text" id="name" value="<%= data.name %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">כיתה:</label>
+                        <input class="form-control" type="text" id="name" value="<%= data.class %>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="phone">טלפון:</label>
-                        <input class="form-control" type="text" name="phone" id="phone" value="<%= data[0].phone %>" >
+                        <input class="form-control" type="text" name="phone" id="phone" value="<%= data.phone %>" >
                     </div>
                     <div class="form-group">
                         <label for="email">אימייל:</label>
-                        <input class="form-control" type="email" name="email" id="email" value="<%= data[0].email %>" >
+                        <input class="form-control" type="email" name="email" id="email" value="<%= data.email %>" >
                     </div>
+                    <%= JSON.stringify(data) %>
                     <div style="text-align:left;">
                         <button type="button" class="btn btn-secondary">ביטול</button>
                         <button type="submit" class="btn btn-primary">שמור</button>
                     </div>
                 </form>
+            </div>
+        </div>
+        <div class="row spacer justify-content-center">
+            <div class="col-lg-6 col-md-4">
+                <%- include('../templates/table', {tableid: "subjectstable", visible: "visible", headers: [["נושא", "subject"], ["רכז", "rname"]], data: data.subjects, button: true, button_text:'הצג', radio: false, add: true}); %>
             </div>
         </div>
     </div>

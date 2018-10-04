@@ -188,24 +188,7 @@ app.post('/register', (req, res) => {
     })
 })
 
-app.get('/settings', (req, res)=>{
-    if (req.user) {
-        switch (req.user.type) {
-            case 0:
-                student.fetchData(req.user.id).then((data)=>{
-                    sendTemplate(req, res, 'settings', {data})
-                })
-                break;
-            case 1:
-                teacher.fetchData(req.user.id).then((data)=>{
-                    sendTemplate(req, res, 'settings', {data})
-                })
 
-        }
-    } else {
-        sendTemplate(req, res, 'error', {errorno: 401, error: 'Unauthorized'})
-    }
-})
 
 app.get('/classes', (req, res) => {
     student.fetchClasses().then((classes)=>{
@@ -247,7 +230,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')))
 app.use((req, res, next) => {
     const adminType = ['/addclass', '/removeclass']
     const teacherType = ['/addconnection', '/matchdata', '/editconnetion']
-    const studentType = []
+    const studentType = ['/addsubject', '/updatedata']
     const need_auth = adminType.concat(teacherType)
     if (req.user) {
         const user = req.user
@@ -339,6 +322,32 @@ app.post('/matchdata', (req, res)=>{
             res.send('null')
         }
     })
+})
+
+app.get('/settings', (req, res)=>{
+    const errorMessage = req.session.error ? req.session.error : null
+    const successMessage = req.session.error ? null : 'פרטים עודכנו בהצלחה'
+    req.session.error = null
+    switch (req.user.type) {
+        case 0:
+            Promise.all([student.fetchData(req.user.id), student.fetchSubjects()]).then(([data, subjects])=>{
+                sendTemplate(req, res, 'settings', {data, subjects})
+            })
+            break;
+        case 1:
+            teacher.fetchData(req.user.id).then((data)=>{
+                sendTemplate(req, res, 'settings', {data})
+            })
+
+    }
+})
+
+app.post('/addsubject', (req, res) => {
+    const subject = req.body.subj
+    if (isNaN(subject)) {
+        sendTemplate(req, res, 'error', {errorno: '400', error: 'Subject is not a number'})
+    }
+    student.addSubject(req.user.id, subject)
 })
 
 

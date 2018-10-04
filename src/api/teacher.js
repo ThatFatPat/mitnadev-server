@@ -33,3 +33,7 @@ exports.fetchMatch = async (key, id) => {
         return match.rakazim_id === id ? match : null
     }
 }
+
+exports.fetchData = async (id) => {
+    database.fetchTeacherData(id)
+}

@@ -105,3 +105,7 @@ a.nav-link:hover {
   text-align: right;
   padding: 10px;
 }
+
+.spacer {
+  margin: 10px 0;
+}
