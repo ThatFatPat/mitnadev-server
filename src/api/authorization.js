@@ -43,7 +43,8 @@ exports.strategy = new LocalStrategy({usernameField: 'id', passwordField: 'passw
         return done(null, false)
     }
     database.getHashedPass(id).then((rows)=>{
-        if (rows.isEmpty()) {
+        rows = []
+        if (rows.length === 0) {
             return done(null, false)
         }
         const hashedpass = rows[0].pass
