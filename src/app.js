@@ -79,7 +79,7 @@ app.get('/', (req, res)=>{
                 headers: student.fetchMatchesHeaders(),
                 matches
              })
-        }).catch(err=>{
+        }).catch(_err=>{
             sendTemplate(req, res, 'error', {errorno: 500, error: 'Unexpected Server Error'})
         })
     } else if (req.user.type === 1) {
@@ -125,7 +125,7 @@ app.get('/login', (req, res)=>{
 /**
  * This will be used to authenticate and retrieve user information
  */
-app.post('/user', (req, res, next)=>{
+app.post('/user', (req, _res, next)=>{
     rememberMe = req.body.rememberMe
     if (rememberMe) {
         req.session.cookie.maxAge = 604800000
@@ -192,7 +192,7 @@ app.post('/register', (req, res) => {
 
 
 
-app.get('/classes', (req, res) => {
+app.get('/classes', (_req, res) => {
     student.fetchClasses().then((classes)=>{
         res.json({classes})
     }).catch(()=>{
@@ -200,7 +200,7 @@ app.get('/classes', (req, res) => {
     })
 })
 
-app.get('/subjects', (req, res) => {
+app.get('/subjects', (_req, res) => {
     student.fetchSubjects().then((subjects)=>{
         return res.json({subjects})
     }).catch(()=>{
