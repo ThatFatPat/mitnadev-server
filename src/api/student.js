@@ -45,7 +45,7 @@ exports.fetchMatches = async (id) => {
 }
 
 exports.fetchMatchesHeaders = () => {
-    return [['סטונדט\\ית', 'name'], ['כיתה', 'class'], ['נושא', 'subject']]
+    return [['נושא', 'subject'], ['מורה אחראי/ת', 'teacher'], ['תיאור', 'desc'], ['פעיל', 'active']]
 }
 
 exports.fetchData = async (id) => {

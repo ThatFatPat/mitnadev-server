@@ -127,7 +127,7 @@ exports.fetchSubjects = async function () {
 }
 
 exports.fetchMatchesStudent = async function (id) {
-    return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, users.name name, matches.active
+    return queryingAsync(`SELECT matches.id id, rakazim.subjectname subject, matches.active, matches.desc \`desc\`, matches.teacher teacher
     FROM matches
     JOIN rakazim ON rakazim.subj_id = matches.rakazim_id
     JOIN users ON rakazim.id = users.id
