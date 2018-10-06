@@ -1,5 +1,7 @@
-.container {
+.tablec {
     margin-top: 10px;
+    overflow: auto;
+    max-height: 100%;
 }
 .filter-btn {
     margin-bottom: 10px;

@@ -1,4 +1,9 @@
 <script>
+    /*
+        Templated Script
+    */
+    <% if (filter) {%>
+    /* FILTER only filter is enabled */
     function toggleFilter() {
         const filterform = document.getElementById("filterform<%= tableid %>")
         if (filterform.hasAttribute("hidden")) {
@@ -9,11 +14,10 @@
         }
     }
 
+    $("#textfil<%= tableid %>").on('change keyup paste', function () {
+        filterTable();
+    });
 
-    // $("#textfil<%= tableid %>").on('change keyup paste', function () {
-    //     filterTable();
-    // });)
-    setInterval(function() { filterTable(); }, 100);
     function filterTable() {
         var input, filter, table, tr, td, i;
         input = document.getElementById("textfil<%= tableid %>")
@@ -38,25 +42,32 @@
             }
         }            
     }
+    <% } %>
+    <% if (button) {%>
     function button_wrapper(key){
         <%= tableid %>button_onclick(key)
     }
+    <%}%>
 </script>
-<div class="container">
-  <div class="d-inline" style="visibility: <%= visible %>;" dir="rtl">
+<div class="tablec container">
+    <% if (filter || add) {%>
+        <div class="d-inline" dir="rtl">
         <% if (add) {%>
             <button class="btn filter-btn" type="button" data-toggle="modal" data-target="#<%=tableid%>Modal">
                 הוסף <i class="fas fa-plus heb"></i>
             </button>
         <%}%>
-        <button type="button" class="btn filter-btn heb" onclick="toggleFilter()">
-            סינון <i class="fas fa-filter"></i>
-        </button>
-        <div id="filterform<%= tableid %>" class="form-group heb" style="text-align:left" hidden>
-            <label for="textfil<%= tableid %>"><b>הכנס טקסט:</b></label>
-            <input type="text" class="form-control" id="textfil<%= tableid %>" style="width:20%;display:inline;">
+        <% if (filter) {%>
+            <button type="button" class="btn filter-btn heb" onclick="toggleFilter()">
+                סינון <i class="fas fa-filter"></i>
+            </button>
+            <div id="filterform<%= tableid %>" class="form-group heb" style="text-align:left" hidden>
+                <label for="textfil<%= tableid %>"><b>הכנס טקסט:</b></label>
+                <input type="text" class="form-control" id="textfil<%= tableid %>" style="width:20%;display:inline;">
+            </div>
+        <%}%>                        
         </div>
-  </div>
+    <%}%>
   <div class="responsive-table" dir="rtl">
     <table dir="rtl" class="table table-bordered table-condensed" id="<%= tableid %>" style="text-align:center;">
       <thead>

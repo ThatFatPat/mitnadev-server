@@ -21,6 +21,7 @@
     </head>
     <body>
         <% include ../templates/navbar %>
-        <%- include('../templates/table', {tableid: "subjecttable", visible: "hidden", headers: headers, data: matches, button: false, button_text:'', radio: false, add: false}); %>
+        <div class="row justify-content-center table-title"><div class="col-md-3"><h2>טבלת התנדבות</h2></div></div>
+        <%- include('../templates/table', {tableid: "subjecttable", headers: headers, data: matches, button: false, button_text:'', radio: false, add: false, filter: false}); %>
     </body>
 </html>

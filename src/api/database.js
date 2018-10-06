@@ -91,7 +91,11 @@ exports.getUserInfo = async function (id) {
  * @param {string} id the id of the student
  */
 exports.getStudentInfo = async function (id) {
-    return (await queryingAsync('SELECT * FROM students WHERE ?', {id}))[0]
+    return queryingAsync(`SELECT users.name name, users.id id, students.email email, students.phone phone, classes.name class
+    FROM students 
+    JOIN users ON users.id = students.id
+    JOIN classes ON classes.id = students.class
+    WHERE students.id = ?`, id)
 }
 
 /**

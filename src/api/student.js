@@ -50,8 +50,9 @@ exports.fetchMatchesHeaders = () => {
 
 exports.fetchData = async (id) => {
     const data = await database.fetchStudentData(id)
-    if (data === []) {
-        return []
+    if (data.length === 0) {
+        const students = await database.getStudentInfo(id)
+        return Object.assign(students[0], {subjects: []})
     }
     const parsed = {name: data[0].name, class: data[0].class, id: data[0].id, email: data[0].email, phone: data[0].phone, subjects: []}
     for (let row of data) {

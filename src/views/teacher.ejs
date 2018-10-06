@@ -28,7 +28,13 @@
             })
         }
         function viewconnectionsave_onclick(){
-            res = $.post("/editconnection", {key: $('#viewconnection_key').val(),  teacher: $('#viewconnection_teacher').val(), desc: $('#viewconnection_description').val(), active:$('#viewconnection_active').val() })
+            res = $.post("/editconnection", {
+                key: $('#viewconnection_key').val(),
+                teacher: $('#viewconnection_teacher').val(),
+                desc: $('#viewconnection_description').val(),
+                active:$('#viewconnection_active').val() 
+            })
+            location.reload()
         }
         function replaceActive() {
             for(let x of $("[key=active]")){
@@ -58,7 +64,7 @@
                         </div>
                         <div class="modal-body mx-3">
                             <div class="form-group table-body heb">
-                                <%- include('../templates/table', {tableid: "studentpicktable", visible: "visible", headers: sheaders, data: students, button: false, button_text: '', radio: true, add: false}); %>
+                                <%- include('../templates/table', {tableid: "studentpicktable", headers: sheaders, data: students, button: false, button_text: '', radio: true, add: false, filter: true}); %>
                             </div>
                             <div class="form-group heb">
                                 <label for="teacher">מורה</label>
@@ -77,7 +83,7 @@
             </div>
         </div>
         <% include ../templates/navbar %>
-        <%- include('../templates/table', {tableid: "studenttable", visible: "visible", headers: headers, data: matches, button: true, button_text: 'הצג', radio: false, add: true}); %>
+        <%- include('../templates/table', {tableid: "studenttable", filter: true, headers: headers, data: matches, button: true, button_text: 'הצג', radio: false, add: true}); %>
         <div id="viewconnectionform" hidden>
             <%- include ../templates/viewconnection %>
         </div>

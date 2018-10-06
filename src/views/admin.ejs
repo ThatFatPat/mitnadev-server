@@ -76,12 +76,12 @@
       </div>        
       <% include ../templates/navbar %>
       <div id="classesTable" class="divider container">
-      <%- include('../templates/table', {tableid: "classestable", visible: "visible", headers: [["כיתה", "name"]], data: classes, button: true, button_text:'<i class="fas fa-times"></i>', radio: false, add: true}); %>
+      <%- include('../templates/table', {tableid: "classestable", filter: true, headers: [["כיתה", "name"]], data: classes, button: true, button_text:'<i class="fas fa-times"></i>', radio: false, add: true}); %>
       
         </div>
         
       <div class="divider container">
-      <%- include('../templates/table', {tableid: "studenttable", visible: "visible", headers: headers, data: matches, button: true, button_text: 'הצג', radio: false, add: false}); %>
+      <%- include('../templates/table', {tableid: "studenttable", filter: true, headers: headers, data: matches, button: true, button_text: 'הצג', radio: false, add: false}); %>
         <div id="viewconnectionform" hidden>
             <%- include ../templates/viewconnection %>
         </div>

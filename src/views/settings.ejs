@@ -81,7 +81,7 @@
                         <input class="form-control" type="email" name="email" id="email" value="<%= data.email %>" >
                     </div>
                     <div style="text-align:left;">
-                        <button type="button" class="btn btn-secondary">ביטול</button>
+                        <button type="button" class="btn btn-secondary" onclick="location.reload()">ביטול</button>
                         <button type="submit" class="btn btn-primary">שמור</button>
                     </div>
                 </form>
@@ -89,7 +89,7 @@
         </div>
         <div class="row spacer justify-content-center">
             <div class="col-lg-6 col-md-4">
-                <%- include('../templates/table', {tableid: "subjectstable", visible: "visible", headers: [["נושא", "subject"], ["רכז", "rname"]], data: data.subjects, button: true, button_text:'<i class="fas fa-times"></i>', radio: false, add: true}); %>
+                <%- include('../templates/table', {tableid: "subjectstable", headers: [["נושא", "subject"], ["רכז", "rname"]], data: data.subjects, button: true, button_text:'<i class="fas fa-times"></i>', radio: false, add: true, filter: false}); %>
             </div>
         </div>
     </div>

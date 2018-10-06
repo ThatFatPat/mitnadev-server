@@ -11,6 +11,7 @@
 html {
   height: 100%;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 body {
@@ -115,4 +116,9 @@ a.nav-link:hover {
 
 .spacer {
   margin: 10px 0;
+}
+.table-title{
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 10px;
 }
