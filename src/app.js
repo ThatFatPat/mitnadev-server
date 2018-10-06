@@ -277,8 +277,8 @@ app.post('/removeclass', (req, res) => {
 
 app.post('/addconnection', (req, res) => {
     const student = req.body.studentpicktableradio
-    const teacher_name = req.body.teacher
-    const desc = req.body.desc
+    const teacher_name = req.body.addconnection_teacher
+    const desc = req.body.addconnection_desc
     const rakaz = req.user.id
     if (desc && desc.length > 255) {
         return sendTemplate(req, res, 'error', {errorno: 400, error: 'תיאור ארוך מדי'})
@@ -296,7 +296,13 @@ app.post('/addconnection', (req, res) => {
 app.post('/editconnection', (req, res) => {
     const teacher_name = req.body.teacher
     const desc = req.body.desc
-    let active = req.body.active
+    let active
+    try{
+        active = parseInt(req.body.active)
+    }
+    catch{
+        return sendTemplate(req, res, 'error', {errorno: 400, error: 'שגיאה בהמרת ערך פעיל'})
+    }
     const key = req.body.key
     if (!key) {
         return sendTemplate(req, res, 'error', {errorno: 400, error: 'חסר מפתח'})

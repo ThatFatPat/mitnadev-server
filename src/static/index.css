@@ -53,11 +53,11 @@ a.logo.navbar-brand:hover {
 .navbar-nav{
   height: 100%;
 }
- #logindropdown.pressed{
+li.nav-item.show>a#userDropdown.nav-link{
   background-color: #d6d3d3;
   color: black;
 }
-a#logindropdown.nav-link{
+a#userDropdown.nav-link{
   display: flex;
   align-items: center;
   height: 100%;
@@ -75,6 +75,13 @@ a.nav-link{
 a.nav-link:hover {
     background-color: darkgray;
     color: black;
+}
+.dropdown-menu{
+  width: 100%;
+  border-radius: 0;
+  border: 0px solid white;
+  margin: 0;
+  padding-left: 1%;
 }
 .dropdown-item {
   text-align: right;

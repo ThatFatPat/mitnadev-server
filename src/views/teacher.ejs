@@ -14,21 +14,21 @@
         }
         function updateView(key){
             matchdata = $.post("/matchdata", {key}, (data)=>{
-                $('#student_name').text(data.name)
-                $('#key').val(key)
-                $('#teacher').val(data.teacher)
-                $('#student-info').text(`כיתה: ${data.class}`)
-                $('#description').val(data.desc)
-                $('#active').val(data.active)
+                $('#viewconnection_student_name').text(data.name)
+                $('#viewconnection_key').val(key)
+                $('#viewconnection_teacher').val(data.teacher)
+                $('#viewconnection_student-info').text(`כיתה: ${data.class}`)
+                $('#viewconnection_description').val(data.desc)
+                $('#viewconnection_active').val(data.active)
                 if(data.active){
-                    $('#active').attr('checked', 'true')
+                    $('#viewconnection_active').attr('checked', 'true')
                 }
                 $('#viewconnectionform').removeAttr('hidden')
                 currentMatch = data
             })
         }
-        function viewconnectionsave_onclick(key){
-            res = $.post("/editconnection", {key: currentMatch.id,  teacher: $('#teacher').text(), desc: $('#description').val(), })
+        function viewconnectionsave_onclick(){
+            res = $.post("/editconnection", {key: $('#viewconnection_key').val(),  teacher: $('#viewconnection_teacher').val(), desc: $('#viewconnection_description').val(), active:$('#viewconnection_active').val() })
         }
         function replaceActive() {
             for(let x of $("[key=active]")){
@@ -62,11 +62,11 @@
                             </div>
                             <div class="form-group heb">
                                 <label for="teacher">מורה</label>
-                                <input type="text" class="form-control heb" id="teacher" name="teacher" placeholder="שם המורה (אם רלוונטי)" maxlength="255"/>
+                                <input type="text" class="form-control heb" id="addconnection_teacher" name="addconnection_teacher" placeholder="שם המורה (אם רלוונטי)" maxlength="255"/>
                             </div>
                                 <div class="form-group heb">
                                 <label for="desc">תיאור</label>
-                                <textarea type="text" class="form-control heb" id="desc" name="desc" placeholder="תיאור קצר על מטרת הקשר (255 תווים)" maxlength="255"></textarea>
+                                <textarea type="text" class="form-control heb" id="addconnection_desc" name="addconnection_desc" placeholder="תיאור קצר על מטרת הקשר (255 תווים)" maxlength="255"></textarea>
                             </div>
                             <div style="text-align:left;">
                                 <button type="submit" class="btn btn-primary">אישור</button>

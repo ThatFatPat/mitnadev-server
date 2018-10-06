@@ -5,43 +5,42 @@
     function save_onclick(){
         viewconnectionsave_onclick()
     }
-    function print_value(a){
-        a.value = 1-a.value
-        console.log(a.value)
+    function viewconnection_slider_set_value(slider_checkbox){
+        slider_checkbox.value = 1-slider_checkbox.value
     }
 </script>
 <div class="container shadow container-backdrop" style="" dir="rtl">
-    <form action="/editconnection" method="post" class="form-padder">
+    <div class="form-padder">
         <h2>פרטי חיבור</h2>
-        <input type="text" name="key" id="key" hidden>
+        <input type="text" name="viewconnection_key" id="viewconnection_key" hidden>
         <div class="form-group">
             <div class="card">
                 <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-user fa-1x"></i> <span id="student_name"></span></h5>
-                <p class="card-text" id="student-info"></p>
+                <h5 class="card-title"><i class="fas fa-user fa-1x"></i> <span id="viewconnection_student_name"></span></h5>
+                <p class="card-text" id="viewconnection_student-info"></p>
                 <a href="#" class="btn btn-primary">למידע התלמיד</a>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <label for="teacher">מורה</label>
-            <input type="text" class="form-control" id="teacher" name="teacher" placeholder="שם המורה (אם רלוונטי)" maxlength="255"/>
+            <label for="viewconnection_teacher">מורה</label>
+            <input type="text" class="form-control" id="viewconnection_teacher" name="viewconnection_teacher" placeholder="שם המורה (אם רלוונטי)" maxlength="255"/>
         </div>
         <div class="form-group">
-            <label for="desc">תיאור</label>
-            <textarea type="text" class="form-control" id="description" name="desc" placeholder="תיאור קצר על מטרת הקשר (255 תווים)" maxlength="255"></textarea>
+            <label for="viewconnection_desc">תיאור</label>
+            <textarea type="text" class="form-control" id="viewconnection_description" name="viewconnection_desc" placeholder="תיאור קצר על מטרת הקשר (255 תווים)" maxlength="255"></textarea>
         </div>
         <div class="form-group">
                 <div>
                         <label class="switch">
-                            <input type="checkbox" name="active" id="active" onclick="print_value(this)">
+                            <input type="checkbox" name="viewconnection_active" id="viewconnection_active" onclick="viewconnection_slider_set_value(this)">
                             <span class="slider"></span>
                         </label>
                 </div>
         </div>
         <div class="align-left-c">
             <button type="button" class="btn btn-secondary" onclick="cancel_onclick()">ביטול</button>
-            <button type="submit" class="btn btn-primary" onclick="save_onclick(this)">שמור</button>
+            <button class="btn btn-primary" onclick="save_onclick()">שמור</button>
         </div>
     </form>
 </div>
