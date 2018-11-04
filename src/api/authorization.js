@@ -73,17 +73,17 @@ exports.registerTeacher = async function (id, name, password, subjectname) {
     return database.registerTeacher(id, name, hashedpass, subjectname)
 }
 
-exports.registerStudent = async function (id, name, password, phone, email, cl /* class, can't type that obviously */, subjectid1, subjectid2, subjectid3) {
-    if (!validDetails({id, password, name, phone, email, cl, subjectid: subjectid1}) || subjectid1 === subjectid2 || (subjectid2 === subjectid3 && subjectid2 !== "") || subjectid1 === subjectid3) {
+exports.registerStudent = async function (id, name, password, phone, email, cl /* class, can't type that obviously */, subjects) {
+    if (!validDetails({id, password, name, phone, email, cl, subjectid: subjects[0]})) {
         throw 'invalid details'
     }
     const hashedpass = await hashPass(password)
-    await database.registerStudent(id, name, hashedpass, phone, email, cl, subjectid1)
-    if (subjectid2 && validDetails({subjectid: subjectid2})) {
-        await database.addSubject(id, subjectid2)
+    await database.registerStudent(id, name, hashedpass, phone, email, cl, subjects[0])
+    if (subjects.length > 1 && validDetails({subjectid: subjects[1]})) {
+        await database.addSubject(id, subjects[1])
     }
-    if (subjectid3 && validDetails({subjectid: subjectid3})) {
-        await database.addSubject(id, subjectid2)
+    if (subjects.length > 2 && validDetails({subjectid: subjects[2]})) {
+        await database.addSubject(id, subjects[2])
     }
 }
 

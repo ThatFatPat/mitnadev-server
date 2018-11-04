@@ -181,10 +181,11 @@ app.get('/registerT', (req, res)=>{
 })
 
 app.post('/register', (req, res) => {
-    auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.cl, req.body.subj_id1, req.body.subj_id2, req.body.subj_id3).then(()=>{
+    auth.registerStudent(req.body.id, req.body.name, req.body.password, req.body.phone, req.body.email, req.body.cl, req.body.subjects).then(()=>{
         req.flash('success', 'הרשמה נקלטה בהצלחה')
         res.redirect('/login')
-    }).catch(()=>{
+    }).catch((e)=>{
+        console.error(e)
         req.session.errorMessage = 'אנא ודאו כי הפרטים שהזנתם תקינים ונסו שנית'
         res.redirect('/registerS')
     })

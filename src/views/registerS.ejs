@@ -59,39 +59,28 @@
                     </div>
                     <div class="form-group">
                       <label><small><i>אנא בחרו עד 3 נושאים בהם תרצו להתנדב</i></small></label><br>
-                      <label for="subject1">נושא ראשון</label>
-                      <select class="form-control" name="subj_id1" id="subject1" required>
-                        <option key="none_1" value="">
-                          -------
-                        </option>
+                      <select class="form-control" name="subjects" id="subjects" size="5" required multiple>
                         <% for (let option of subjects) { %>
-                        <option key="<%=option.id%>_1" value="<%=option.id%>">
+                        <option key="<%=option.id%>" value="<%=option.id%>">
                           <%= option.name %>
                         </option>
                         <%}%>
                       </select>
-                      <label for="subject2">נושא שני</label>
-                      <select class="form-control" name="subj_id2" id="subject2">
-                        <option key="none_2" value="">
-                          -------
-                        </option>
-                        <% for (let option of subjects) { %>
-                        <option key="<%=option.id%>_2" value="<%=option.id%>">
-                          <%= option.name %>
-                        </option>
-                        <%}%>
-                      </select>
-                      <label for="subject3">נושא שלישי</label>
-                      <select class="form-control" name="subj_id3" id="subject3">
-                        <option key="none_3" value="">
-                          -------
-                        </option>
-                        <% for (let option of subjects) { %>
-                        <option key="<%=option.id%>_3" value="<%=option.id%>">
-                          <%= option.name %>
-                        </option>
-                        <%}%>
-                      </select>
+                      <script type="text/javascript">
+                        $(document).ready(function() {
+
+                          var last_valid_selection = null;
+
+                          $('#subjects').change(function(event) {
+
+                            if ($(this).val().length > 3) {
+
+                              $(this).val(last_valid_selection);
+                            } else {
+                              last_valid_selection = $(this).val();
+                            }
+                          });});
+                        </script>
                     </div>
                     <div class="form-group">
                       <i class="fa fa-lock"></i>
